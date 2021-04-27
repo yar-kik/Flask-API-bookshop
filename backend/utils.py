@@ -18,7 +18,9 @@ def create_app(config_name) -> Flask:
     migrate.init_app(app, db)
     cache.init_app(app)
 
-    from library import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    from library import library
+    from auth import auth
+    app.register_blueprint(library)
+    app.register_blueprint(auth, url_prefix="auth")
 
     return app
