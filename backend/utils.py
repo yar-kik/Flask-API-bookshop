@@ -2,7 +2,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_caching import Cache
-from .config import config
+from config import config
 
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
@@ -18,7 +18,7 @@ def create_app(config_name) -> Flask:
     migrate.init_app(app, db)
     cache.init_app(app)
 
-    from .library import main as main_blueprint
+    from library import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     return app

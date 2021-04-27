@@ -19,7 +19,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "RedisCache"
     CACHE_REDIS_URL = os.environ.get("CACHE_REDIS_URL") or \
-                      "localhost://redis:6379"
+                      "redis://localhost:6379"
 
     @staticmethod
     def init_app(app):

@@ -1,8 +1,11 @@
 import os
 
-from . import create_app
+from flask_script import Manager
+
+from utils import create_app
 
 app = create_app(os.getenv('FLASK_ENV') or 'default')
+manager = Manager(app)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    manager.run()
