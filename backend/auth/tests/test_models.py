@@ -4,8 +4,11 @@ from auth.models import User
 
 class TestUserModel(unittest.TestCase):
     def setUp(self) -> None:
-        self.user = User(password="pass")
+        self.user = User(password="pass", username="user_name")
         self.user2 = User(password="pass")
+
+    def test_model_str(self):
+        self.assertEqual(str(self.user), "User user_name")
 
     def test_password_setter(self):
         self.assertIsNotNone(self.user.password_hash)

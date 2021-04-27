@@ -11,6 +11,9 @@ class User(db.Model):
     username = db.Column(db.String(64), nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
 
+    def __str__(self):
+        return f"User {self.username}"
+
     @property
     def password(self) -> None:
         raise AttributeError("password is not a readable attribute")
