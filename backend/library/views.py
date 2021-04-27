@@ -36,7 +36,7 @@ class BookApi(Resource):
 
     def get(self, book_id=None):
         """Get detail information of book"""
-        book = cache.get(id)
+        book = cache.get(book_id)
         if not book:
             book = db.session.query(Book).filter_by(id=book_id).first()
             cache.set(book_id, book, timeout=9 * 60)
