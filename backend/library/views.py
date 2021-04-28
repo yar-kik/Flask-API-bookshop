@@ -71,7 +71,7 @@ class BookApi(Resource):
                                          partial=True,
                                          session=db.session)
         except ValidationError as e:
-            return {"message": str(e)}
+            return {"message": str(e)}, 400
         db.session.add(book)
         db.session.commit()
         cache.delete(book_id)
