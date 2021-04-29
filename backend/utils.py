@@ -21,7 +21,7 @@ def create_app(config_name) -> Flask:
     from library import library
     from auth import auth
     app.register_blueprint(library)
-    app.register_blueprint(auth, url_prefix="auth")
+    app.register_blueprint(auth, url_prefix="/auth")
 
     from library.models import Book
     from auth.models import User
