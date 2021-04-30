@@ -5,5 +5,5 @@ from .models import Book
 class BookSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Book
-        dump_only = ['id']
+        dump_only = ('id',)
         load_instance = True
