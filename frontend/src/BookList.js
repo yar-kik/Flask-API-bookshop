@@ -61,10 +61,10 @@ class BookList extends Component {
                                           src="https://covervault.com/wp-content/uploads/2018/07/092-5.5x8.5-Standing-Paperback-Book-Mockup-Prev1.jpg"/>
                             </Link>
                             <Card.Body>
-                                <Card.Title>{book.title}</Card.Title>
+                                <Card.Title>{book.author} "{book.title}"</Card.Title>
                                 <Card.Text>{book.description}</Card.Text>
                             </Card.Body>
-                            <Card.Footer>Price {book.price}₴</Card.Footer>
+                            <Card.Footer>Number of pages - {book.pages}</Card.Footer>
                         </Card>
                     </Col>
                 ))}

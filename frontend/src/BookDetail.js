@@ -3,6 +3,7 @@ import {Button, Row, Col, Image, Card, Table} from "react-bootstrap";
 import axios from "axios";
 import NotFound from "./NotFound";
 import {ModalEdit, ModalConfirm} from "./Modals"
+import {Link} from "react-router-dom";
 
 class BookDetail extends Component {
     constructor(props) {
@@ -25,14 +26,14 @@ class BookDetail extends Component {
 
     deleteBook() {
         axios
-            .delete(`/tea/${this.state.bookDetail.slug}`)
-            .then(() => this.props.history.push('/book'))
+            .delete(`/books/${this.state.bookDetail.id}`)
+            .then(() => this.props.history.push('/books'))
             .catch(error => console.error(error))
     }
 
     getDetail() {
         axios
-            .get(`/tea/${this.props.match.params.slug}`)
+            .get(`/books/${this.props.match.params.id}`)
             .then((result) =>
                 this.setState({bookDetail: result.data}))
             .catch(error => {
@@ -41,9 +42,9 @@ class BookDetail extends Component {
             });
     }
 
-    editBook(data){
+    editBook(data) {
         axios
-            .patch(`/tea/${this.state.bookDetail.slug}`, data)
+            .patch(`/books/${this.state.bookDetail.id}`, data)
             .then(Object.assign(this.state.bookDetail, data))
             .catch(error => console.error(error))
     }
@@ -56,7 +57,7 @@ class BookDetail extends Component {
         this.setState({modalConfirm: !this.state.modalConfirm})
     }
 
-    handleSubmit(data){
+    handleSubmit(data) {
         let newData = {};
         for (let [key, value] of Object.entries(data))
             if (this.state.bookDetail[key] !== value)
@@ -73,13 +74,13 @@ class BookDetail extends Component {
                     <Row className="m-3">
                         <Col sm={9} md={4} className="mb-3">
                             <Image
-                                src="https://miychay.com/upload/iblock/7c6/7c664063ba5e6215cb3567de3330c187.jpg"
-                                fluid/>
+                                src="https://covervault.com/wp-content/uploads/2018/07/092-5.5x8.5-Standing-Paperback-Book-Mockup-Prev1.jpg"
+                            fluid/>
                         </Col>
                         <Col sm={9} md={6}>
                             <Card>
                                 <Card.Header
-                                    as="h2">{this.state.bookDetail.brand} {this.state.bookDetail.title}
+                                    as="h2">{this.state.bookDetail.author} "{this.state.bookDetail.title}"
                                 </Card.Header>
                                 <Card.Body>
                                     <Card.Title>Description</Card.Title>
@@ -87,22 +88,24 @@ class BookDetail extends Component {
                                     <Table borderless>
                                         <tbody>
                                         <tr>
-                                            <td>Origin</td>
-                                            <td>{this.state.bookDetail.origin}</td>
+                                            <td>Publisher</td>
+                                            <td>{this.state.bookDetail.publisher}</td>
                                         </tr>
                                         <tr>
-                                            <td>Type</td>
-                                            <td>{this.state.bookDetail.type}</td>
+                                            <td>Category</td>
+                                            <td>{this.state.bookDetail.category}</td>
                                         </tr>
                                         </tbody>
                                     </Table>
-                                    <Card.Title>Price {this.state.bookDetail.price}₴</Card.Title>
+                                    <Card.Title>Number of pages - {this.state.bookDetail.pages}</Card.Title>
                                 </Card.Body>
                                 <Card.Footer>
                                     <Row>
-                                        <Col><Button block onClick={this.showModalEdit}
+                                        <Col><Button block
+                                                     onClick={this.showModalEdit}
                                                      variant="outline-primary">Edit</Button></Col>
-                                        <Col><Button block onClick={this.showModalConfirm}
+                                        <Col><Button block
+                                                     onClick={this.showModalConfirm}
                                                      variant="outline-danger">Delete</Button></Col>
                                     </Row>
                                 </Card.Footer>
@@ -114,7 +117,7 @@ class BookDetail extends Component {
                                   onDelete={this.deleteBook}/>
                     <ModalEdit show={this.state.modalEdit}
                                onHide={this.showModalEdit}
-                               teaDetail={this.state.bookDetail}
+                               bookDetail={this.state.bookDetail}
                                handleSubmit={this.handleSubmit}/>
                 </>
             );

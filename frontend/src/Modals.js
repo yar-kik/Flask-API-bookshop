@@ -25,31 +25,35 @@ export const ModalConfirm = (props) => {
 }
 
 export const ModalEdit = (props) => {
-    const [brand, setBrand] = useState("");
-    const [title, setTitle] = useState("");
-    const [type, setType] = useState("");
-    const [origin, setOrigin] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState(0);
+    const [author, setAuthor] = useState();
+    const [title, setTitle] = useState();
+    const [category, setCategory] = useState();
+    const [publisher, setPublisher] = useState();
+    const [description, setDescription] = useState();
+    const [pages, setPages] = useState();
+    const [published, setPublished] = useState();
 
     useEffect(() => {
-        setBrand(props.teaDetail.brand);
-        setTitle(props.teaDetail.title);
-        setType(props.teaDetail.type);
-        setOrigin(props.teaDetail.origin);
-        setDescription(props.teaDetail.description);
-        setPrice(props.teaDetail.price);
+        setAuthor(props.bookDetail.author);
+        setTitle(props.bookDetail.title);
+        setCategory(props.bookDetail.category);
+        setPublisher(props.bookDetail.publisher);
+        setDescription(props.bookDetail.description);
+        setPages(props.bookDetail.pages);
+        setPublished(props.bookDetail.published);
     }, [props]);
+
 
     const submitForm = (event) => {
         event.preventDefault();
         const data = {
-            brand: brand,
+            author: author,
             title: title,
-            type: type,
-            origin: origin,
+            category: category,
+            publisher: publisher,
             description: description,
-            price: price
+            published: published,
+            pages: pages
         };
         props.handleSubmit(data);
         props.onHide();
@@ -61,12 +65,12 @@ export const ModalEdit = (props) => {
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={submitForm}>
-                    <Form.Group controlId="editForm.brandInput">
-                        <Form.Label>Brand</Form.Label>
+                    <Form.Group controlId="editForm.authorInput">
+                        <Form.Label>Author</Form.Label>
                         <Form.Control type="text"
                                       required
-                                      defaultValue={brand}
-                                      onChange={e => setBrand(e.target.value)}/>
+                                      defaultValue={author}
+                                      onChange={e => setAuthor(e.target.value)}/>
                     </Form.Group>
                     <Form.Group controlId="editForm.titleInput">
                         <Form.Label>Title</Form.Label>
@@ -75,21 +79,22 @@ export const ModalEdit = (props) => {
                                       defaultValue={title}
                                       onChange={e => setTitle(e.target.value)}/>
                     </Form.Group>
-                    <Form.Group controlId="editForm.inputType">
-                        <Form.Label>Choose type of tea</Form.Label>
+                    <Form.Group controlId="editForm.categoryInput">
+                        <Form.Label>Choose category of book</Form.Label>
                         <Form.Control as="select"
-                                      defaultValue={type}
-                                      onChange={e => setType(e.target.value)}>
-                            <option value="black tea">Black tea</option>
-                            <option value="green tea">Green tea</option>
-                            <option value="fruit tea">Fruit tea</option>
+                                      defaultValue={category}
+                                      onChange={e => setCategory(e.target.value)}>
+                            <option value="">Select category</option>
+                            <option value="detective">Detective</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="fantasy">Fantasy</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group controlId="editForm.inputOrigin">
-                        <Form.Label>Origin</Form.Label>
+                        <Form.Label>Publisher</Form.Label>
                         <Form.Control type="text"
-                                      defaultValue={origin}
-                                      onChange={e => setOrigin(e.target.value)}/>
+                                      defaultValue={publisher}
+                                      onChange={e => setPublisher(e.target.value)}/>
                     </Form.Group>
                     <Form.Group controlId="editForm.inputDescription">
                         <Form.Label>Description</Form.Label>
@@ -97,12 +102,17 @@ export const ModalEdit = (props) => {
                                       defaultValue={description}
                                       onChange={e => setDescription(e.target.value)}/>
                     </Form.Group>
-                    <Form.Group controlId="editForm.inputPrice">
-                        <Form.Label>Origin</Form.Label>
+                    <Form.Group controlId="editForm.inputPublished">
+                        <Form.Label>Year of published</Form.Label>
                         <Form.Control type="number" step="0.01" min={0}
-                                      required
-                                      defaultValue={price}
-                                      onChange={e => setPrice(+(e.target.value))}/>
+                                      defaultValue={published}
+                                      onChange={e => setPublished(+(e.target.value))}/>
+                    </Form.Group>
+                    <Form.Group controlId="editForm.inputPages">
+                        <Form.Label>Number of pages</Form.Label>
+                        <Form.Control type="number" step="0.01" min={0}
+                                      defaultValue={pages}
+                                      onChange={e => setPages(+(e.target.value))}/>
                     </Form.Group>
                     <div className="d-flex justify-content-end">
                         <Button variant="success" type="submit"
@@ -121,13 +131,13 @@ export const ModalEdit = (props) => {
 
 
 export const ModalAdd = (props) => {
-    const [author, setAuthor] = useState("");
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("black tea");
-    const [publisher, setPublisher] = useState("");
-    const [description, setDescription] = useState("");
-    const [pages, setPages] = useState(0);
-    const [published, setPublished] = useState(0);
+    const [author, setAuthor] = useState();
+    const [title, setTitle] = useState();
+    const [category, setCategory] = useState();
+    const [publisher, setPublisher] = useState();
+    const [description, setDescription] = useState();
+    const [pages, setPages] = useState();
+    const [published, setPublished] = useState();
 
     const submitForm = async (event) => {
         event.preventDefault();
@@ -137,11 +147,11 @@ export const ModalAdd = (props) => {
             category: category,
             publisher: publisher,
             description: description,
-            // published: published,
+            published: published,
             pages: pages
         };
         props.handleSubmit(data);
-            props.onHide();
+        props.onHide();
     }
     return (
         <Modal show={props.show} onHide={props.onHide}>
@@ -168,9 +178,9 @@ export const ModalAdd = (props) => {
                                       as="select"
                                       onChange={e => setCategory(e.target.value.toLowerCase())}>
                             <option value="">Select category</option>
-                            <option value="Detective">Black tea</option>
-                            <option value="Adventure">Green tea</option>
-                            <option value="Fantasy">Fruit tea</option>
+                            <option value="detective">Detective</option>
+                            <option value="adventure">Adventure</option>
+                            <option value="fantasy">Fantasy</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group controlId="addForm.inputPublisher">
