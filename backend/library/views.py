@@ -35,12 +35,12 @@ class BookApi(Resource):
 
     def get(self, book_id=None):
         """Get detail information of book"""
-        book = cache.get(book_id)
+        book = cache.get(f"book:{book_id}")
         if not book:
             book = db.session.query(Book).filter_by(id=book_id).first()
         if not book:
             return {'message': "Not found"}, 404
-        cache.set(book_id, book,
+        cache.set(f"book:{book_id}", book,
                   timeout=current_app.config["CACHE_TIMEOUT"])
         return self.book_schema.dump(book)
 
@@ -56,7 +56,7 @@ class BookApi(Resource):
         except ValidationError as e:
             return {"message": str(e)}, 400
         book.save()
-        cache.delete(book_id)
+        cache.delete(f"book:{book_id}")
         return self.book_schema.dump(book), 200
 
     def patch(self, book_id):
@@ -72,7 +72,7 @@ class BookApi(Resource):
         except ValidationError as e:
             return {"message": str(e)}, 400
         book.save()
-        cache.delete(book_id)
+        cache.delete(f"book:{book_id}")
         return {'message': 'Updated successfully'}, 200
 
     def delete(self, book_id):
@@ -81,5 +81,5 @@ class BookApi(Resource):
         if not book:
             return {'message': "Not found"}, 404
         book.delete()
-        cache.delete(book_id)
+        cache.delete(f"book:{book_id}")
         return '', 204
