@@ -20,6 +20,7 @@ class Config:
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "RedisCache"
     CACHE_REDIS_URL = os.environ.get("CACHE_REDIS_URL") or \
                       "redis://localhost:6379"
+    CACHE_TIMEOUT = os.environ.get("CACHE_TIMEOUT", 60 * 60)
 
     @staticmethod
     def init_app(app):

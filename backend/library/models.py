@@ -17,3 +17,16 @@ class Book(db.Model):
 
     def __repr__(self):
         return f'Book ({self.title}), {self.author}'
+
+    # TODO: move to services?
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return Book.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()

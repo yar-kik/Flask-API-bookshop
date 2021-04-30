@@ -34,7 +34,9 @@ class AuthLoginApi(Resource):
         if not auth:
             return "", 401, \
                    {"WWW-Authenticate": "Basic realm='Authentication required'"}
-        user = db.session.query(User).filter_by(username=auth.get("username", '')).first()
+        username = auth.get("username", '')
+        # TODO: login by email
+        user = db.session.query(User).filter_by(username=username).first()
         if not user or not user.verify_password(auth.get("password", '')):
             return "", 401, \
                    {"WWW-Authenticate": "Basic realm='Authentication required'"}

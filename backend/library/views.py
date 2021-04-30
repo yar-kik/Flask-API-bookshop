@@ -1,6 +1,6 @@
 """Module for REST API classes"""
 
-from flask import request
+from flask import request, current_app
 from flask_restful import Resource
 from marshmallow import ValidationError
 
@@ -25,8 +25,7 @@ class BookListApi(Resource):
             book = self.book_schema.load(request.json, session=db.session)
         except ValidationError as e:
             return {"message": str(e)}, 400
-        db.session.add(book)
-        db.session.commit()
+        book.save()
         return self.book_schema.dump(book), 201
 
 
@@ -39,10 +38,10 @@ class BookApi(Resource):
         book = cache.get(book_id)
         if not book:
             book = db.session.query(Book).filter_by(id=book_id).first()
-        if book:
-            cache.set(book_id, book, timeout=9 * 60)
-        else:
+        if not book:
             return {'message': "Not found"}, 404
+        cache.set(book_id, book,
+                  timeout=current_app.config["CACHE_TIMEOUT"])
         return self.book_schema.dump(book)
 
     def put(self, book_id):
@@ -56,8 +55,7 @@ class BookApi(Resource):
                                          session=db.session)
         except ValidationError as e:
             return {"message": str(e)}, 400
-        db.session.add(book)
-        db.session.commit()
+        book.save()
         cache.delete(book_id)
         return self.book_schema.dump(book), 200
 
@@ -73,8 +71,7 @@ class BookApi(Resource):
                                          session=db.session)
         except ValidationError as e:
             return {"message": str(e)}, 400
-        db.session.add(book)
-        db.session.commit()
+        book.save()
         cache.delete(book_id)
         return {'message': 'Updated successfully'}, 200
 
@@ -83,7 +80,6 @@ class BookApi(Resource):
         book = db.session.query(Book).filter_by(id=book_id).first()
         if not book:
             return {'message': "Not found"}, 404
-        db.session.delete(book)
-        db.session.commit()
+        book.delete()
         cache.delete(book_id)
         return '', 204
