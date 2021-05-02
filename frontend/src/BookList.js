@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Col, Card, Row, Button} from "react-bootstrap";
+import {Pagination, Col, Card, Row, Button} from "react-bootstrap";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import {ModalAdd} from "./Modals";
@@ -11,21 +11,38 @@ class BookList extends Component {
         this.state = {
             bookList: [],
             modalAdd: false,
-            unique: false
+            unique: false,
+            currentPage: Number.parseInt(new URLSearchParams(this.props.history.location.search).get("page")) || 1,
+            amountPages: 2
         }
         this.showModalAdd = this.showModalAdd.bind(this);
         this.createNewBook = this.createNewBook.bind(this);
+        this.handlePageClick = this.handlePageClick.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
+
     }
 
     componentDidMount() {
-        this.refreshList();
+        this.refreshList(this.state.currentPage);
     }
 
-    refreshList = () => {
+    handlePageClick = (event) => {
+        const pageNumber = Number.parseInt(event.target.getAttribute("data-page"));
+        this.setState({currentPage: pageNumber});
+        this.refreshList(pageNumber);
+    }
+    handlePageChange = (pageNumber) => {
+        this.setState({currentPage: pageNumber});
+        this.refreshList(pageNumber);
+    }
+
+    refreshList = (page) => {
         axios
-            .get("/books/")
-            .then((result) =>
-                this.setState({bookList: result.data}))
+            .get(`/books?page=${page}`)
+            .then((result) => {
+                this.setState({bookList: result.data});
+                this.props.history.push(`?page=${page}`)
+            })
             .catch((error) => console.error(error));
     }
 
@@ -64,12 +81,48 @@ class BookList extends Component {
                                 <Card.Title>{book.author} "{book.title}"</Card.Title>
                                 <Card.Text>{book.description}</Card.Text>
                             </Card.Body>
-                            <Card.Footer>Number of pages - {book.pages}</Card.Footer>
+                            <Card.Footer>Number of pages
+                                - {book.pages}</Card.Footer>
                         </Card>
                     </Col>
                 ))}
             </Row>
         ))
+
+        let paginationItems = [];
+        // const amountPages = pagination.data.length / pagination.numberPerPage;
+        const amountPages = this.state.amountPages;
+        const currentPage = this.state.currentPage;
+        let ellipsis = true;
+        for (let number = 1; number <= amountPages; number++) {
+            if (amountPages > 4) {
+                if (number <= 3 || number >= amountPages - 1)
+                    paginationItems.push(
+                        <Pagination.Item onClick={this.handlePageClick}
+                                         key={number}
+                                         active={number === currentPage}
+                                         data-page={number}>
+                            {number}
+                        </Pagination.Item>
+                    );
+                else if (ellipsis) {
+                    paginationItems.push(<Pagination.Ellipsis
+                        // onClick={handleEllipsisClick}
+                    />)
+                    ellipsis = false;
+                }
+            } else {
+                paginationItems.push(
+                    <Pagination.Item onClick={this.handlePageClick}
+                                     key={number}
+                                     active={number === currentPage}
+                                     data-page={number}>
+                        {number}
+                    </Pagination.Item>
+                );
+            }
+        }
+
         return (
             <>
                 <Row key="buttonRow">
@@ -82,8 +135,23 @@ class BookList extends Component {
                 {content}
                 <ModalAdd show={this.state.modalAdd}
                           onHide={this.showModalAdd}
-                          handleSubmit={this.handleSubmit}
-                />
+                          handleSubmit={this.handleSubmit}/>
+
+                <Row className="d-flex justify-content-center">
+                    <Col md={{span: "auto"}} className="mt-5">
+                        <Pagination>
+                            <Pagination.First
+                                onClick={() => this.handlePageChange(1)}/>
+                            <Pagination.Prev
+                            onClick={() => this.handlePageChange(this.state.currentPage - 1)}/>
+                            {paginationItems}
+                            <Pagination.Next
+                            onClick={() => this.handlePageChange(this.state.currentPage + 1)}/>
+                            <Pagination.Last
+                            onClick={() => this.handlePageChange(this.state.amountPages)}/>
+                        </Pagination>
+                    </Col>
+                </Row>
             </>
         );
     }

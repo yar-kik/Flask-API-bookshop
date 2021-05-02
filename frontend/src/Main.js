@@ -5,6 +5,7 @@ import BookDetail from "./BookDetail";
 import BookList from "./BookList"
 import {Container, Navbar, Nav} from "react-bootstrap";
 import NotFound from "./NotFound";
+import ScrollToTop from "./ScrollToTop";
 
 class Main extends Component {
     render() {
@@ -18,6 +19,7 @@ class Main extends Component {
                     </Nav>
                 </Navbar>
                 <Container fluid className="p-5">
+                    <ScrollToTop/>
                     <Switch>
                         <Route exact path="/" component={Home}/>
                         <Route path="/books/:id" component={BookDetail}/>
