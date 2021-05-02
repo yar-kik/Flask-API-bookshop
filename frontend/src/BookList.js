@@ -13,7 +13,7 @@ class BookList extends Component {
             modalAdd: false,
             unique: false,
             currentPage: Number.parseInt(new URLSearchParams(this.props.history.location.search).get("page")) || 1,
-            amountPages: 2
+            amountPages: 0
         }
         this.showModalAdd = this.showModalAdd.bind(this);
         this.createNewBook = this.createNewBook.bind(this);
@@ -40,8 +40,10 @@ class BookList extends Component {
         axios
             .get(`/books?page=${page}`)
             .then((result) => {
-                this.setState({bookList: result.data});
-                this.props.history.push(`?page=${page}`)
+                this.setState({bookList: result.data.books});
+                this.setState({amountPages: result.data.pages_amount});
+                console.log(result.data);
+                this.props.history.push(`?page=${page}`);
             })
             .catch((error) => console.error(error));
     }
@@ -95,7 +97,7 @@ class BookList extends Component {
         const currentPage = this.state.currentPage;
         let ellipsis = true;
         for (let number = 1; number <= amountPages; number++) {
-            if (amountPages > 4) {
+            if (amountPages > 5) {
                 if (number <= 3 || number >= amountPages - 1)
                     paginationItems.push(
                         <Pagination.Item onClick={this.handlePageClick}
@@ -141,14 +143,19 @@ class BookList extends Component {
                     <Col md={{span: "auto"}} className="mt-5">
                         <Pagination>
                             <Pagination.First
-                                onClick={() => this.handlePageChange(1)}/>
+                                onClick={() => this.handlePageChange(1)}
+                                disabled={this.state.currentPage === 1}
+                            />
                             <Pagination.Prev
-                            onClick={() => this.handlePageChange(this.state.currentPage - 1)}/>
+                                onClick={() => this.handlePageChange(this.state.currentPage - 1)}
+                                disabled={this.state.currentPage === 1}/>
                             {paginationItems}
                             <Pagination.Next
-                            onClick={() => this.handlePageChange(this.state.currentPage + 1)}/>
+                                onClick={() => this.handlePageChange(this.state.currentPage + 1)}
+                                disabled={this.state.currentPage === this.state.amountPages}/>
                             <Pagination.Last
-                            onClick={() => this.handlePageChange(this.state.amountPages)}/>
+                                onClick={() => this.handlePageChange(this.state.amountPages)}
+                                disabled={this.state.currentPage === this.state.amountPages}/>
                         </Pagination>
                     </Col>
                 </Row>

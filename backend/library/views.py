@@ -2,7 +2,9 @@
 
 from flask import request, current_app
 from flask_restful import Resource
+from flask_sqlalchemy import Pagination
 from marshmallow import ValidationError
+from sqlalchemy.orm import Query
 
 from .schemas import BookSchema
 from .models import Book
@@ -16,8 +18,18 @@ class BookListApi(Resource):
 
     def get(self):
         """Get list of book objects"""
-        all_books = db.session.query(Book).all()
-        return self.book_schema.dump(all_books, many=True)
+        page = request.args.get('page', 1, type=int)
+        all_books: Query = db.session.query(Book)
+        # if request.args:
+        #     categories = request.args.getlist("category")
+        #     all_books = all_books.filter(Book.category.in_(categories))
+        all_books: Pagination = all_books.paginate(
+            page, current_app.config['BOOKS_PER_PAGE'], False
+        )
+        pages_amount = all_books.pages
+        data = {"books": self.book_schema.dump(all_books.items, many=True),
+                "pages_amount": pages_amount}
+        return data
 
     def post(self):
         """Create new book object"""
