@@ -20,9 +20,9 @@ class BookListApi(Resource):
         """Get list of book objects"""
         page = request.args.get('page', 1, type=int)
         all_books: Query = db.session.query(Book)
-        # if request.args:
-        #     categories = request.args.getlist("category")
-        #     all_books = all_books.filter(Book.category.in_(categories))
+        categories = request.args.getlist("category")
+        if categories:
+            all_books = all_books.filter(Book.category.in_(categories))
         all_books: Pagination = all_books.paginate(
             page, current_app.config['BOOKS_PER_PAGE'], False
         )
