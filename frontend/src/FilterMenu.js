@@ -2,61 +2,54 @@ import {Button, Form} from "react-bootstrap";
 import React, {useState} from "react";
 
 export const FilterMenu = (props) => {
-    const [checked, setChecked] = useState(false);
     const handleCheckChange = (event) => {
-        setChecked(props.checkChange(event));
+        props.checkChange(event);
     }
+    const categoriesData = [
+        {value: "detective", label: "Detective"},
+        {value: "fantasy", label: "Fantasy"},
+        {value: "adventure", label: "Adventure"},
+        {value: "thriller", label: "Thriller"}
+    ]
+    const categories = categoriesData.map(category =>
+        <Form.Check
+            key={category.value}
+            type="checkbox"
+            data-filter="category"
+            label={category.label}
+            id={category.value}
+            value={category.value}
+            custom
+            onChange={handleCheckChange}
+        />);
+
+    const publishersData = [
+        {value: "Manning Publications"},
+        {value: "O'Reilly"},
+        {value: "No Starch Press"},
+        {value: "Packt Publishing"}
+    ]
+    const publishers = publishersData.map(category =>
+        <Form.Check
+            key={category.value}
+            type="checkbox"
+            data-filter="publisher"
+            label={category.value}
+            id={category.value}
+            value={category.value}
+            custom
+            onChange={handleCheckChange}
+        />);
     return (
         <Form>
             <Form.Label as="h2">Filters</Form.Label>
             <Form.Group>
                 <Form.Label>Category</Form.Label>
-                <Form.Check
-                    type="checkbox"
-                    label="Detective"
-                    id="detective"
-                    value="detective"
-                    custom
-                    onChange={handleCheckChange}
-                    checked={checked}
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="Fantasy"
-                    id="fantasy"
-                    custom
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="Adventure"
-                    id="adventure"
-                    custom
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="Thriller"
-                    id="thriller"
-                    custom
-                />
+                {categories}
             </Form.Group>
             <Form.Group>
                 <Form.Label>Publisher</Form.Label>
-                <Form.Check
-                    type="checkbox"
-                    label="Manning Publications"
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="O'Reilly"
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="No Starch Press"
-                />
-                <Form.Check
-                    type="checkbox"
-                    label="Packt Publishing"
-                />
+                {publishers}
             </Form.Group>
             <Form.Group>
                 <Form.Label>Language</Form.Label>

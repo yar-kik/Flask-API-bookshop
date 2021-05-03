@@ -17,6 +17,8 @@ class Config:
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN', 'flask_admin')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BOOKS_PER_PAGE = os.environ.get('BOOKS_PER_PAGE', 4)
+
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "RedisCache"
     CACHE_REDIS_URL = os.environ.get("CACHE_REDIS_URL") or \
                       "redis://localhost:6379"

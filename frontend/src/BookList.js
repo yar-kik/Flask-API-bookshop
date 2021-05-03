@@ -22,7 +22,7 @@ class BookList extends Component {
         this.createNewBook = this.createNewBook.bind(this);
         this.handlePageClick = this.handlePageClick.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.checkChange = this.checkChange.bind(this);
+        this.handleCheckChange = this.handleCheckChange.bind(this);
     }
 
     componentDidMount() {
@@ -44,15 +44,18 @@ class BookList extends Component {
         this.refreshList();
     }
 
-    checkChange = (event) => {
+    handleCheckChange = (event) => {
         const checked = event.target.checked;
         const value = event.target.value;
+        const filter = event.target.getAttribute("data-filter");
         if (checked) {
-            this.state.search.append("category", value);
+            this.state.search.append(filter, value);
             this.state.search.set("page", 1);
         } else {
-            const keys = Array.from(this.state.search.keys());
-            keys.forEach(key => this.state.search.delete(key));
+            let temp = this.state.search.getAll(filter);
+            temp = temp.filter((elem) => elem !== value);
+            this.state.search.delete(filter);
+            temp.map((val) => this.state.search.append(filter, val));
         }
         this.setState({currentPage: 1});
         this.refreshList();
@@ -101,7 +104,7 @@ class BookList extends Component {
                           handleSubmit={this.handleSubmit}/>
                 <Row>
                     <Col md={2}>
-                        <FilterMenu checkChange={this.checkChange}/>
+                        <FilterMenu checkChange={this.handleCheckChange}/>
                     </Col>
                     <Col md={10}>
                         <BookListContent bookList={this.state.bookList}/>

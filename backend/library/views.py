@@ -21,8 +21,11 @@ class BookListApi(Resource):
         page = request.args.get('page', 1, type=int)
         all_books: Query = db.session.query(Book)
         categories = request.args.getlist("category")
+        publishers = request.args.getlist("publisher")
         if categories:
             all_books = all_books.filter(Book.category.in_(categories))
+        if publishers:
+            all_books = all_books.filter(Book.publisher.in_(publishers))
         all_books: Pagination = all_books.paginate(
             page, current_app.config['BOOKS_PER_PAGE'], False
         )
