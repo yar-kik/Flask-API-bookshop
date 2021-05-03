@@ -14,48 +14,53 @@ class BookList extends Component {
             bookList: [],
             modalAdd: false,
             unique: false,
-            currentPage: Number.parseInt(new URLSearchParams(this.props.history.location.search).get("page")) || 1,
-            amountPages: 0
+            currentPage: 1,
+            amountPages: 0,
+            search: new URLSearchParams()
         }
         this.showModalAdd = this.showModalAdd.bind(this);
         this.createNewBook = this.createNewBook.bind(this);
         this.handlePageClick = this.handlePageClick.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.checkChange = this.checkChange.bind(this);
-
     }
 
     componentDidMount() {
-        this.refreshList({page: this.state.currentPage});
+        const queryString = new URLSearchParams(this.props.history.location.search);
+        const page = Number.parseInt(queryString.get("page")) || 1;
+        this.setState({currentPage: page});
+        this.refreshList();
     }
 
     handlePageClick = (event) => {
         const pageNumber = Number.parseInt(event.target.getAttribute("data-page"));
         this.setState({currentPage: pageNumber});
-        const params = new URLSearchParams({page: pageNumber.toString()});
-        this.refreshList(params);
+        this.state.search.set("page", pageNumber);
+        this.refreshList();
     }
     handlePageChange = (pageNumber) => {
         this.setState({currentPage: pageNumber});
-        const params = new URLSearchParams({page: pageNumber});
-        this.refreshList(params);
+        this.state.search.set("page", pageNumber);
+        this.refreshList();
     }
 
     checkChange = (event) => {
         const checked = event.target.checked;
         const value = event.target.value;
-        const params = new URLSearchParams({category: "fantasy"});
-        params.append("category", value);
-        if (checked)
-            this.refreshList(params)
-        else
-            this.refreshList({page: this.state.currentPage})
-        console.log(checked);
-        console.log(value);
+        if (checked) {
+            this.state.search.append("category", value);
+            this.state.search.set("page", 1);
+        } else {
+            const keys = Array.from(this.state.search.keys());
+            keys.forEach(key => this.state.search.delete(key));
+        }
+        this.setState({currentPage: 1});
+        this.refreshList();
         return checked;
     }
 
-    refreshList = (params) => {
+    refreshList = () => {
+        const params = this.state.search;
         axios
             .get("/books", {params: params})
             .then((result) => {
