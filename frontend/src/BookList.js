@@ -1,10 +1,11 @@
 import React, {Component} from "react";
-import {Col, Row, Button} from "react-bootstrap";
+import {Col, Row, Button, Form} from "react-bootstrap";
 import axios from "axios";
 import {ModalAdd} from "./Modals";
 import Paginator from "./Paginator";
 import BookListContent from "./BookListContent";
 import {FilterMenu} from "./FilterMenu";
+import {SortingMenu} from "./SortingMenu";
 
 
 class BookList extends Component {
@@ -29,6 +30,8 @@ class BookList extends Component {
         const queryString = new URLSearchParams(this.props.history.location.search);
         const page = Number.parseInt(queryString.get("page")) || 1;
         this.setState({currentPage: page});
+        for (let entry of queryString)
+            this.state.search.append(entry[0], entry[1]);
         this.refreshList();
     }
 
@@ -69,7 +72,11 @@ class BookList extends Component {
             .then((result) => {
                 this.setState({bookList: result.data.books});
                 this.setState({amountPages: result.data.pages_amount});
-                this.props.history.push({search: params.toString()});
+                this.props.history.push({
+                    pathname: "/books",
+                    search: params.toString()
+                });
+                console.log(this.props.history);
             })
             .catch((error) => console.error(error));
     }
@@ -93,20 +100,23 @@ class BookList extends Component {
         return (
             <>
                 <Row key="buttonRow">
-                    <Col className="d-flex justify-content-end">
-                        <Button size="lg" variant="primary"
-                                onClick={this.showModalAdd}>Add new
+                    <Col>
+                        <Button size="lg" variant="primary" className="m-2"
+                            onClick={this.showModalAdd}>Add new
                             item</Button>
-                    </Col>
-                </Row>
-                <ModalAdd show={this.state.modalAdd}
+                        <ModalAdd show={this.state.modalAdd}
                           onHide={this.showModalAdd}
                           handleSubmit={this.handleSubmit}/>
+                    </Col>
+                    <Col>
+                        <SortingMenu/>
+                    </Col>
+                </Row>
                 <Row>
-                    <Col md={2}>
+                    <Col lg={2}>
                         <FilterMenu checkChange={this.handleCheckChange}/>
                     </Col>
-                    <Col md={10}>
+                    <Col lg={10}>
                         <BookListContent bookList={this.state.bookList}/>
                     </Col>
                 </Row>
