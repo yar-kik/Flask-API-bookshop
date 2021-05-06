@@ -32,6 +32,8 @@ export const ModalEdit = (props) => {
     const [description, setDescription] = useState();
     const [pages, setPages] = useState();
     const [published, setPublished] = useState();
+    const [price, setPrice] = useState();
+    const [language, setLanguage] = useState();
 
     useEffect(() => {
         setAuthor(props.bookDetail.author);
@@ -41,6 +43,8 @@ export const ModalEdit = (props) => {
         setDescription(props.bookDetail.description);
         setPages(props.bookDetail.pages);
         setPublished(props.bookDetail.published);
+        setPrice(props.bookDetail.price);
+        setLanguage(props.bookDetail.language);
     }, [props]);
 
 
@@ -53,7 +57,9 @@ export const ModalEdit = (props) => {
             publisher: publisher,
             description: description,
             published: published,
-            pages: pages
+            pages: pages,
+            language: language,
+            price: price
         };
         props.handleSubmit(data);
         props.onHide();
@@ -114,6 +120,23 @@ export const ModalEdit = (props) => {
                                       defaultValue={pages}
                                       onChange={e => setPages(+(e.target.value))}/>
                     </Form.Group>
+                    <Form.Group controlId="editForm.inputPrice">
+                        <Form.Label>Price</Form.Label>
+                        <Form.Control type="number" step="0.01" min={0} required
+                                      defaultValue={price}
+                                      onChange={e => setPrice(+(e.target.value))}/>
+                    </Form.Group>
+                    <Form.Group controlId="editForm.inputLanguage">
+                        <Form.Label>Language</Form.Label>
+                        <Form.Control as="select"
+                                      defaultValue={language}
+                                      onChange={e => setLanguage(e.target.value)}>
+                            <option value="">Select language</option>
+                            <option value="russian">Russian</option>
+                            <option value="ukrainian">Ukrainian</option>
+                            <option value="english">English</option>
+                        </Form.Control>
+                    </Form.Group>
                     <div className="d-flex justify-content-end">
                         <Button variant="success" type="submit"
                                 className="mr-2">
@@ -138,6 +161,9 @@ export const ModalAdd = (props) => {
     const [description, setDescription] = useState();
     const [pages, setPages] = useState();
     const [published, setPublished] = useState();
+    const [price, setPrice] = useState();
+    const [language, setLanguage] = useState();
+
 
     const submitForm = async (event) => {
         event.preventDefault();
@@ -148,7 +174,9 @@ export const ModalAdd = (props) => {
             publisher: publisher,
             description: description,
             published: published,
-            pages: pages
+            pages: pages,
+            price: price,
+            language: language
         };
         props.handleSubmit(data);
         props.onHide();
@@ -176,7 +204,7 @@ export const ModalAdd = (props) => {
                         <Form.Label>Choose type of tea</Form.Label>
                         <Form.Control required
                                       as="select"
-                                      onChange={e => setCategory(e.target.value.toLowerCase())}>
+                                      onChange={e => setCategory(e.target.value)}>
                             <option value="">Select category</option>
                             <option value="detective">Detective</option>
                             <option value="adventure">Adventure</option>
@@ -193,15 +221,30 @@ export const ModalAdd = (props) => {
                         <Form.Control as="textarea" rows={4}
                                       onChange={e => setDescription(e.target.value)}/>
                     </Form.Group>
-                    <Form.Group controlId="addForm.inputPrice">
+                    <Form.Group controlId="addForm.inputPublished">
                         <Form.Label>Published</Form.Label>
                         <Form.Control type="number" step="0.01" min={0}
                                       onChange={e => setPublished(+(e.target.value))}/>
                     </Form.Group>
-                    <Form.Group controlId="addForm.inputPrice">
+                    <Form.Group controlId="addForm.inputPage">
                         <Form.Label>Number of pages</Form.Label>
                         <Form.Control type="number" step="0.01" min={0}
                                       onChange={e => setPages(+(e.target.value))}/>
+                    </Form.Group>
+                    <Form.Group controlId="addForm.inputPrice">
+                        <Form.Label>Price</Form.Label>
+                        <Form.Control type="number" step="0.01" min={0} required
+                                      onChange={e => setPrice(+(e.target.value))}/>
+                    </Form.Group>
+                    <Form.Group controlId="addForm.inputLanguage">
+                        <Form.Label>Language</Form.Label>
+                        <Form.Control onChange={e => setLanguage(e.target.value)}
+                                      as="select">
+                            <option value="">Select language</option>
+                            <option value="russian">Russian</option>
+                            <option value="ukrainian">Ukrainian</option>
+                            <option value="english">English</option>
+                        </Form.Control>
                     </Form.Group>
                     <div className="d-flex justify-content-end">
                         <Button variant="success" type="submit"
