@@ -10,10 +10,12 @@ class Book(db.Model):
     title = db.Column(db.String(64), nullable=False, index=True)
     publisher = db.Column(db.String(64))
     author = db.Column(db.String(64), nullable=False)
-    published = db.Column(db.Date)
+    published = db.Column(db.String(4))
     description = db.Column(db.Text)
     pages = db.Column(db.SmallInteger)
     category = db.Column(db.String(64))
+    language = db.Column(db.String(64))
+    price = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return f'Book ({self.title}), {self.author}'

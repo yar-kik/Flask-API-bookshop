@@ -21,9 +21,8 @@ class BookList extends Component {
         }
         this.showModalAdd = this.showModalAdd.bind(this);
         this.createNewBook = this.createNewBook.bind(this);
-        this.handlePageClick = this.handlePageClick.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.handleCheckChange = this.handleCheckChange.bind(this);
+        this.handleFilterChange = this.handleFilterChange.bind(this);
     }
 
     componentDidMount() {
@@ -35,22 +34,22 @@ class BookList extends Component {
         this.refreshList();
     }
 
-    handlePageClick = (event) => {
-        const pageNumber = Number.parseInt(event.target.getAttribute("data-page"));
-        this.setState({currentPage: pageNumber});
-        this.state.search.set("page", pageNumber);
-        this.refreshList();
-    }
     handlePageChange = (pageNumber) => {
         this.setState({currentPage: pageNumber});
         this.state.search.set("page", pageNumber);
         this.refreshList();
     }
 
-    handleCheckChange = (event) => {
-        const checked = event.target.checked;
-        const value = event.target.value;
-        const filter = event.target.getAttribute("data-filter");
+    handleSortChange = (sortData) => {
+        const order = sortData.order;
+        const value = sortData.value;
+        this.state.search.set("sort", value);
+        this.state.search.set("order", order);
+        // this.state.search.set("page", 1);
+        this.refreshList();
+    }
+
+    handleFilterChange = (checked, value, filter) => {
         if (checked) {
             this.state.search.append(filter, value);
             this.state.search.set("page", 1);
@@ -62,7 +61,6 @@ class BookList extends Component {
         }
         this.setState({currentPage: 1});
         this.refreshList();
-        return checked;
     }
 
     refreshList = () => {
@@ -76,7 +74,6 @@ class BookList extends Component {
                     pathname: "/books",
                     search: params.toString()
                 });
-                console.log(this.props.history);
             })
             .catch((error) => console.error(error));
     }
@@ -102,19 +99,19 @@ class BookList extends Component {
                 <Row key="buttonRow">
                     <Col>
                         <Button size="lg" variant="primary" className="m-2"
-                            onClick={this.showModalAdd}>Add new
+                                onClick={this.showModalAdd}>Add new
                             item</Button>
                         <ModalAdd show={this.state.modalAdd}
-                          onHide={this.showModalAdd}
-                          handleSubmit={this.handleSubmit}/>
+                                  onHide={this.showModalAdd}
+                                  handleSubmit={this.handleSubmit}/>
                     </Col>
                     <Col>
-                        <SortingMenu/>
+                        <SortingMenu checkSort={this.handleSortChange}/>
                     </Col>
                 </Row>
                 <Row>
                     <Col lg={2}>
-                        <FilterMenu checkChange={this.handleCheckChange}/>
+                        <FilterMenu checkChange={this.handleFilterChange}/>
                     </Col>
                     <Col lg={10}>
                         <BookListContent bookList={this.state.bookList}/>
@@ -124,7 +121,6 @@ class BookList extends Component {
                     <Col md={{span: "auto"}} className="mt-5">
                         <Paginator amountPages={this.state.amountPages}
                                    currentPage={this.state.currentPage}
-                                   handlePageClick={this.handlePageClick}
                                    handlePageChange={this.handlePageChange}
                         />
                     </Col>

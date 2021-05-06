@@ -110,13 +110,14 @@ export const ModalEdit = (props) => {
                     </Form.Group>
                     <Form.Group controlId="editForm.inputPublished">
                         <Form.Label>Year of published</Form.Label>
-                        <Form.Control type="number" step="0.01" min={0}
+                        <Form.Control type="number" min={2000} max={2021}
+                                      required
                                       defaultValue={published}
                                       onChange={e => setPublished(+(e.target.value))}/>
                     </Form.Group>
                     <Form.Group controlId="editForm.inputPages">
                         <Form.Label>Number of pages</Form.Label>
-                        <Form.Control type="number" step="0.01" min={0}
+                        <Form.Control type="number" min={0}
                                       defaultValue={pages}
                                       onChange={e => setPages(+(e.target.value))}/>
                     </Form.Group>
@@ -152,7 +153,6 @@ export const ModalEdit = (props) => {
     )
 }
 
-
 export const ModalAdd = (props) => {
     const [author, setAuthor] = useState();
     const [title, setTitle] = useState();
@@ -184,7 +184,7 @@ export const ModalAdd = (props) => {
     return (
         <Modal show={props.show} onHide={props.onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Edit tea</Modal.Title>
+                <Modal.Title>Add book</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={submitForm} validated>
@@ -201,7 +201,7 @@ export const ModalAdd = (props) => {
                                       onChange={e => setTitle(e.target.value)}/>
                     </Form.Group>
                     <Form.Group controlId="addForm.inputType">
-                        <Form.Label>Choose type of tea</Form.Label>
+                        <Form.Label>Choose category</Form.Label>
                         <Form.Control required
                                       as="select"
                                       onChange={e => setCategory(e.target.value)}>
@@ -223,12 +223,13 @@ export const ModalAdd = (props) => {
                     </Form.Group>
                     <Form.Group controlId="addForm.inputPublished">
                         <Form.Label>Published</Form.Label>
-                        <Form.Control type="number" step="0.01" min={0}
+                        <Form.Control type="number" min={2000} max={2021}
+                                      required
                                       onChange={e => setPublished(+(e.target.value))}/>
                     </Form.Group>
                     <Form.Group controlId="addForm.inputPage">
                         <Form.Label>Number of pages</Form.Label>
-                        <Form.Control type="number" step="0.01" min={0}
+                        <Form.Control type="number" min={0}
                                       onChange={e => setPages(+(e.target.value))}/>
                     </Form.Group>
                     <Form.Group controlId="addForm.inputPrice">
@@ -238,8 +239,9 @@ export const ModalAdd = (props) => {
                     </Form.Group>
                     <Form.Group controlId="addForm.inputLanguage">
                         <Form.Label>Language</Form.Label>
-                        <Form.Control onChange={e => setLanguage(e.target.value)}
-                                      as="select">
+                        <Form.Control
+                            onChange={e => setLanguage(e.target.value)}
+                            as="select">
                             <option value="">Select language</option>
                             <option value="russian">Russian</option>
                             <option value="ukrainian">Ukrainian</option>

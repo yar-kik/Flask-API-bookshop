@@ -4,6 +4,7 @@ from flask import request, current_app
 from flask_restful import Resource
 from flask_sqlalchemy import Pagination
 from marshmallow import ValidationError
+from sqlalchemy import func
 from sqlalchemy.orm import Query
 
 from .schemas import BookSchema
@@ -22,16 +23,29 @@ class BookListApi(Resource):
         all_books: Query = db.session.query(Book)
         categories = request.args.getlist("category")
         publishers = request.args.getlist("publisher")
+        languages = request.args.getlist("language")
+        sort_by = request.args.get("sort")
+        order = request.args.get("order")
         if categories:
             all_books = all_books.filter(Book.category.in_(categories))
         if publishers:
             all_books = all_books.filter(Book.publisher.in_(publishers))
+        if languages:
+            all_books = all_books.filter(Book.language.in_(languages))
+        if sort_by == "price":
+            if order == "asc":
+                all_books = all_books.order_by(Book.price.asc())
+            elif order == "desc":
+                all_books = all_books.order_by(Book.price.desc())
+        else:
+            all_books = all_books.order_by(Book.title.asc())
         all_books: Pagination = all_books.paginate(
-            page, current_app.config['BOOKS_PER_PAGE'], False
+            page, current_app.config['BOOKS_PER_PAGE'], False  # TODO: change on True?
         )
         pages_amount = all_books.pages
         data = {"books": self.book_schema.dump(all_books.items, many=True),
-                "pages_amount": pages_amount}
+                "pages_amount": pages_amount,
+                "current_page": page}
         return data
 
     def post(self):

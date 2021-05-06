@@ -95,9 +95,17 @@ class BookDetail extends Component {
                                             <td>Category</td>
                                             <td>{this.state.bookDetail.category}</td>
                                         </tr>
+                                        <tr>
+                                            <td>Language</td>
+                                            <td>{this.state.bookDetail.language}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Published in year</td>
+                                            <td>{this.state.bookDetail.published}</td>
+                                        </tr>
                                         </tbody>
                                     </Table>
-                                    <Card.Title>Number of pages - {this.state.bookDetail.pages}</Card.Title>
+                                    <Card.Title>Price: {this.state.bookDetail.price}₴</Card.Title>
                                 </Card.Body>
                                 <Card.Footer>
                                     <Row>

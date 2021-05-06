@@ -3,7 +3,7 @@ import React, {useState} from "react";
 
 
 export const SortingMenu = (props) => {
-    const [dropdownValue, setDropdownValue] = useState("Filter");
+    const [dropdownValue, setDropdownValue] = useState("Sorting");
     const dropdownData = [
         {value: "price", order: "desc", title: "From expensive to cheap"},
         {value: "price", order: "asc", title: "From cheap to expensive"}

@@ -25,8 +25,7 @@ class BookListContent extends Component {
                                         <Card.Title>{book.author} "{book.title}"</Card.Title>
                                         <Card.Text>{book.description}</Card.Text>
                                     </Card.Body>
-                                    <Card.Footer>Number of pages
-                                        - {book.pages}</Card.Footer>
+                                    <Card.Footer style={{fontSize: "20px"}}>{book.price} ₴</Card.Footer>
                                 </Card>
                             </Col>
                         ))}
