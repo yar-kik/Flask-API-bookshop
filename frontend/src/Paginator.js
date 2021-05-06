@@ -4,38 +4,48 @@ import React, {Component} from "react";
 class Paginator extends Component {
 
     render() {
+        const delta = 1;
+        const pageNumbers = [];
         const paginationItems = [];
+        let temp;
         const amountPages = this.props.amountPages;
         const currentPage = this.props.currentPage;
 
-        let ellipsis = true;
-        for (let number = 1; number <= amountPages; number++) {
-            if (amountPages > 5) {
-                if (number <= 3 || number >= amountPages - 1)
+        for (let i = 1; i <= amountPages; i++) {
+            if (i === 1 ||
+                i === amountPages ||
+                (currentPage - delta) <= i &&
+                i < (currentPage + delta + 1)) {
+                pageNumbers.push(i);
+            }
+        }
+
+        for (let i of pageNumbers) {
+            if (temp) {
+                if (i - temp === 2)
                     paginationItems.push(
-                        <Pagination.Item onClick={this.props.handlePageClick}
-                                         key={number}
-                                         active={number === currentPage}
-                                         data-page={number}>
-                            {number}
+                        <Pagination.Item
+                            onClick={(e) => this.props.handlePageChange(temp + 1)}
+                            key={temp + 1}
+                            active={temp + 1 === currentPage}>
+                            {temp + 1}
                         </Pagination.Item>
                     );
-                else if (ellipsis) {
+                else if (i - temp !== 1) {
                     paginationItems.push(<Pagination.Ellipsis
-                        // onClick={handleEllipsisClick}
-                    />)
-                    ellipsis = false;
+                        key={i + "..."}
+                        disabled={true}/>)
                 }
-            } else {
-                paginationItems.push(
-                    <Pagination.Item onClick={this.props.handlePageClick}
-                                     key={number}
-                                     active={number === currentPage}
-                                     data-page={number}>
-                        {number}
-                    </Pagination.Item>
-                );
             }
+            paginationItems.push(
+                <Pagination.Item
+                    onClick={(e) => this.props.handlePageChange(i)}
+                    key={i}
+                    active={i === currentPage}>
+                    {i}
+                </Pagination.Item>
+            )
+            temp = i;
         }
 
         return (
@@ -43,17 +53,22 @@ class Paginator extends Component {
                 <Pagination.First
                     onClick={() => this.props.handlePageChange(1)}
                     disabled={currentPage === 1}
-                />
+                    key="first"/>
                 <Pagination.Prev
                     onClick={() => this.props.handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}/>
+                    disabled={currentPage === 1}
+                    key="prev"/>
+
                 {paginationItems}
+
                 <Pagination.Next
                     onClick={() => this.props.handlePageChange(currentPage + 1)}
-                    disabled={currentPage === amountPages}/>
+                    disabled={currentPage === amountPages}
+                    key="next"/>
                 <Pagination.Last
                     onClick={() => this.props.handlePageChange(amountPages)}
-                    disabled={currentPage === amountPages}/>
+                    disabled={currentPage === amountPages}
+                    key="last"/>
             </Pagination>
         )
     }
