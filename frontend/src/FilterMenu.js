@@ -1,93 +1,68 @@
-import {Button, Col, Form, Modal} from "react-bootstrap";
-import React, {useState} from "react";
+import {Button, DropdownButton, Form} from "react-bootstrap";
+import React from "react";
 
 export const FilterMenu = (props) => {
-    const [active, setActive] = useState(false);
     const style = {
-        backgroundColor: "white",
-        borderRadius: "20px",
         padding: "5px",
         margin: "10px"
     }
-    const handleCheckChange = (event) => {
-        props.checkChange(event);
+    const handleFilterChange = (event) => {
+        const checked = event.target.checked;
+        const value = event.target.value;
+        const filter = event.target.getAttribute("data-filter");
+        props.checkChange(checked, value, filter);
     }
-    const categoriesData = [
-        {value: "detective", label: "Detective"},
-        {value: "fantasy", label: "Fantasy"},
-        {value: "adventure", label: "Adventure"},
-        {value: "thriller", label: "Thriller"}
-    ]
-    const publishersData = [
-        {value: "Manning Publications"},
-        {value: "O'Reilly"},
-        {value: "No Starch Press"},
-        {value: "Packt Publishing"}
-    ]
-    const languagesData = [
-        {value: "ukrainian", label: "Ukrainian"},
-        {value: "russian", label: "Russian"},
-        {value: "english", label: "English"}
-    ]
+
+    const filterData = [
+        {
+            filter: "category", data: [
+                {value: "detective", label: "Detective"},
+                {value: "fantasy", label: "Fantasy"},
+                {value: "adventure", label: "Adventure"},
+                {value: "thriller", label: "Thriller"}
+            ]
+        }, {
+            filter: "publisher", data: [
+                {value: "Manning Publications", label: "Manning Publications"},
+                {value: "O'Reilly", label: "O'Reilly"},
+                {value: "No Starch Press", label: "No Starch Press"},
+                {value: "Packt Publishing", label: "Packt Publishing"}
+            ]
+        }, {
+            filter: "language", data: [
+                {value: "ukrainian", label: "Ukrainian"},
+                {value: "russian", label: "Russian"},
+                {value: "english", label: "English"}
+            ]
+        }];
 
 
-    const categories = categoriesData.map(category =>
-        <Form.Check
-            key={category.value}
-            type="checkbox"
-            data-filter="category"
-            label={category.label}
-            id={category.value}
-            value={category.value}
-            custom
-            onChange={handleCheckChange}
-        />);
-
-    const publishers = publishersData.map(category =>
-        <Form.Check
-            key={category.value}
-            type="checkbox"
-            data-filter="publisher"
-            label={category.value}
-            id={category.value}
-            value={category.value}
-            custom
-            onChange={handleCheckChange}
-        />);
-
-    const languages = languagesData.map(language =>
-        <Form.Check
-            key={language.value}
-            type="checkbox"
-            data-filter="language"
-            label={language.label}
-            id={language.value}
-            value={language.value}
-            custom
-            onChange={handleCheckChange}
-        />);
+    const filters = filterData.map(filter =>
+        <Form.Group>
+            <Form.Label>{filter.filter}</Form.Label>
+            {filter.data.map(data =>
+                <Form.Check
+                    key={data.value}
+                    type="checkbox"
+                    data-filter={filter.filter}
+                    label={data.label}
+                    id={data.value}
+                    value={data.value}
+                    custom
+                    onChange={handleFilterChange}/>
+            )}
+        </Form.Group>
+    )
 
     return (
-        <>
-            <Button className="m-2 d-block d-sm-block d-lg-none" onClick={() => setActive(!active)}>Filters</Button>
-            <Form
-                className={active ? "d-block" : "d-none d-sm-none d-lg-block"}
-                style={active ? {...style, position: "absolute", zIndex: 5} : style}>
-                <Form.Label as="h2">Filters</Form.Label>
-                <Form.Group>
-                    <Form.Label>Category</Form.Label>
-                    {categories}
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Publisher</Form.Label>
-                    {publishers}
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Language</Form.Label>
-                    {languages}
-                </Form.Group>
-                <Button>Clear filters</Button>
+        <DropdownButton title="Filter"
+                        id="dropdown-filter-menu"
+                        size="lg"
+                        className="m-2">
+            <Form style={style}>
+                <Form.Label as="h3">Filters</Form.Label>
+                {filters}
             </Form>
-        </>
+        </DropdownButton>
     )
 }
