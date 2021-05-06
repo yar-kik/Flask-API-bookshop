@@ -18,6 +18,19 @@ export const FilterMenu = (props) => {
         {value: "adventure", label: "Adventure"},
         {value: "thriller", label: "Thriller"}
     ]
+    const publishersData = [
+        {value: "Manning Publications"},
+        {value: "O'Reilly"},
+        {value: "No Starch Press"},
+        {value: "Packt Publishing"}
+    ]
+    const languagesData = [
+        {value: "ukrainian", label: "Ukrainian"},
+        {value: "russian", label: "Russian"},
+        {value: "english", label: "English"}
+    ]
+
+
     const categories = categoriesData.map(category =>
         <Form.Check
             key={category.value}
@@ -30,12 +43,6 @@ export const FilterMenu = (props) => {
             onChange={handleCheckChange}
         />);
 
-    const publishersData = [
-        {value: "Manning Publications"},
-        {value: "O'Reilly"},
-        {value: "No Starch Press"},
-        {value: "Packt Publishing"}
-    ]
     const publishers = publishersData.map(category =>
         <Form.Check
             key={category.value}
@@ -47,6 +54,19 @@ export const FilterMenu = (props) => {
             custom
             onChange={handleCheckChange}
         />);
+
+    const languages = languagesData.map(language =>
+        <Form.Check
+            key={language.value}
+            type="checkbox"
+            data-filter="language"
+            label={language.label}
+            id={language.value}
+            value={language.value}
+            custom
+            onChange={handleCheckChange}
+        />);
+
     return (
         <>
             <Button className="m-2 d-block d-sm-block d-lg-none" onClick={() => setActive(!active)}>Filters</Button>
@@ -64,18 +84,7 @@ export const FilterMenu = (props) => {
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Language</Form.Label>
-                    <Form.Check
-                        type="checkbox"
-                        label="English"
-                    />
-                    <Form.Check
-                        type="checkbox"
-                        label="Russian"
-                    />
-                    <Form.Check
-                        type="checkbox"
-                        label="Ukrainian"
-                    />
+                    {languages}
                 </Form.Group>
                 <Button>Clear filters</Button>
             </Form>
