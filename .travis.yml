@@ -5,5 +5,16 @@ before_install:
   - cd backend
 install:
   - pip install -r requirements.txt
+  - pip install coveralls
 script:
   - python -m unittest
+after_script:
+  - coveralls
+deploy:
+  provider: pages
+  skip_cleanup: true
+  keep_history: true
+  github_token: $github_token
+  target_branch: master
+  on:
+    branch: staging
