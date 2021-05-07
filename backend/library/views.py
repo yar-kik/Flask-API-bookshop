@@ -40,7 +40,7 @@ class BookListApi(Resource):
         else:
             all_books = all_books.order_by(Book.title.asc())
         all_books: Pagination = all_books.paginate(
-            page, current_app.config['BOOKS_PER_PAGE'], False  # TODO: change on True?
+            page, current_app.config['BOOKS_PER_PAGE'], True  # TODO: change on True?
         )
         pages_amount = all_books.pages
         data = {"books": self.book_schema.dump(all_books.items, many=True),

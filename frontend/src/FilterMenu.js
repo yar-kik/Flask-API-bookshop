@@ -1,4 +1,4 @@
-import {Button, DropdownButton, Form} from "react-bootstrap";
+import {DropdownButton, Form} from "react-bootstrap";
 import React from "react";
 
 export const FilterMenu = (props) => {

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Col, Row, Button, Form} from "react-bootstrap";
+import {Col, Row, Button} from "react-bootstrap";
 import axios from "axios";
 import {ModalAdd} from "./Modals";
 import Paginator from "./Paginator";
@@ -26,27 +26,25 @@ class BookList extends Component {
     }
 
     componentDidMount() {
+        this.getBookList();
+    }
+
+    componentWillMount() {
         const queryString = new URLSearchParams(this.props.history.location.search);
         const page = Number.parseInt(queryString.get("page")) || 1;
-        this.setState({currentPage: page});
-        for (let entry of queryString)
-            this.state.search.append(entry[0], entry[1]);
-        this.refreshList();
+        this.setState({search: queryString, currentPage: page});
     }
 
     handlePageChange = (pageNumber) => {
         this.setState({currentPage: pageNumber});
         this.state.search.set("page", pageNumber);
-        this.refreshList();
+        this.getBookList();
     }
 
-    handleSortChange = (sortData) => {
-        const order = sortData.order;
-        const value = sortData.value;
+    handleSortChange = (value, order) => {
         this.state.search.set("sort", value);
         this.state.search.set("order", order);
-        // this.state.search.set("page", 1);
-        this.refreshList();
+        this.getBookList();
     }
 
     handleFilterChange = (checked, value, filter) => {
@@ -60,28 +58,32 @@ class BookList extends Component {
             temp.map((val) => this.state.search.append(filter, val));
         }
         this.setState({currentPage: 1});
-        this.refreshList();
+        this.getBookList();
     }
 
-    refreshList = () => {
+    getBookList = () => {
         const params = this.state.search;
         axios
             .get("/books", {params: params})
             .then((result) => {
-                this.setState({bookList: result.data.books});
-                this.setState({amountPages: result.data.pages_amount});
+                this.setState({
+                    bookList: result.data.books,
+                    amountPages: result.data.pages_amount
+                });
                 this.props.history.push({
                     pathname: "/books",
                     search: params.toString()
                 });
             })
-            .catch((error) => console.error(error));
+            .catch((error) => {console.error(error);
+            if (error.response.status === 404)
+            this.props.history.replace("/404")});
     }
 
     createNewBook = (data) => {
         axios
             .post('/books/', data)
-            .then(() => this.refreshList())
+            .then(() => this.getBookList())
             .catch((error) => console.error(error.response.data.message));
     }
 

@@ -10,7 +10,7 @@ export const SortingMenu = (props) => {
     ]
     const handleDropdownSorting = (dropdown) => {
         setDropdownValue(dropdown.title);
-        props.checkSort(dropdown);
+        props.checkSort(dropdown.value, dropdown.order);
     }
     const dropdownItems = dropdownData.map(dropdown =>
         <Dropdown.Item key={dropdown.value}
