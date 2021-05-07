@@ -28,3 +28,4 @@ venv/
 
 *.sqlite
 *.sqlite3
+.coverage
