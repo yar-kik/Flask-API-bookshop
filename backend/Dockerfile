@@ -15,5 +15,3 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 COPY . ./api
-
-CMD ["python", "./manage.py", "runserver"]
