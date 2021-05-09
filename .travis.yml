@@ -13,5 +13,6 @@ script:
   - coverage run --source="auth/","library/" -m unittest
 after_script:
   - coveralls
-after_success:
-  - sh .travis/deploy_dockerhub.sh
+  - pylint backend --ignore=migrations --load-plugins=pylint_flask,pylint_flask_sqlalchemy
+#after_success:
+#  - sh .travis/deploy_dockerhub.sh

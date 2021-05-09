@@ -14,7 +14,8 @@ class TestBookListApi(unittest.TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         self.book_data = {"title": "Book title",
-                          "author": "Book author"}
+                          "author": "Book author",
+                          "price": 200}
         self.json_data = json.dumps(self.book_data)
         with self.app.app_context():
             db.create_all()
@@ -67,7 +68,8 @@ class TestBookApi(unittest.TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         self.book_data = json.dumps({"title": "Single Book",
-                                     "author": "Book author"})
+                                     "author": "Book author",
+                                     "price": 200})
         with self.app.app_context():
             db.create_all()
 
@@ -103,7 +105,8 @@ class TestBookApi(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.put(
             '/books/1', data=json.dumps({"title": "New title",
-                                         "author": "Book author"}),
+                                         "author": "Book author",
+                                         "price": 250}),
             headers={"Content-Type": "application/json"}
         )
         self.assertEqual(response.status_code, 200)

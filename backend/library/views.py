@@ -69,8 +69,7 @@ class BookApi(Resource):
             book = db.session.query(Book).filter_by(id=book_id).first()
         if not book:
             return {'message': "Not found"}, 404
-        cache.set(f"book:{book_id}", book,
-                  timeout=current_app.config["CACHE_TIMEOUT"])
+        cache.set(f"book:{book_id}", book)
         return self.book_schema.dump(book)
 
     def put(self, book_id):
