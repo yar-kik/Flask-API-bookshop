@@ -4,13 +4,13 @@ from flask import request, current_app
 from flask_restful import Resource
 from flask_sqlalchemy import Pagination
 from marshmallow import ValidationError
-from sqlalchemy import func
-from sqlalchemy.orm import Query
+from sqlalchemy.orm import Query, Session
 
 from .schemas import BookSchema
 from .models import Book
 
 from utils import db, cache
+from .services import BookServices
 
 
 class BookListApi(Resource):
@@ -19,32 +19,18 @@ class BookListApi(Resource):
 
     def get(self):
         """Get list of book objects"""
-        page = request.args.get('page', 1, type=int)
-        all_books: Query = db.session.query(Book)
-        categories = request.args.getlist("category")
-        publishers = request.args.getlist("publisher")
-        languages = request.args.getlist("language")
-        sort_by = request.args.get("sort")
-        order = request.args.get("order")
-        if categories:
-            all_books = all_books.filter(Book.category.in_(categories))
-        if publishers:
-            all_books = all_books.filter(Book.publisher.in_(publishers))
-        if languages:
-            all_books = all_books.filter(Book.language.in_(languages))
-        if sort_by == "price":
-            if order == "asc":
-                all_books = all_books.order_by(Book.price.asc())
-            elif order == "desc":
-                all_books = all_books.order_by(Book.price.desc())
-        else:
-            all_books = all_books.order_by(Book.title.asc())
-        all_books: Pagination = all_books.paginate(
-            page, current_app.config['BOOKS_PER_PAGE'], True  # TODO: change on True?
-        )
-        pages_amount = all_books.pages
+        query = request.args
+        page: int = query.get('page', 1, type=int)
+        book_service = BookServices(db.session.query(Book))
+        all_books = book_service\
+            .filter_by_category(query.getlist("category"))\
+            .filter_by_publisher(query.getlist("publisher"))\
+            .filter_by_language(query.getlist("language"))\
+            .sort_by_price(query.get("order"))\
+            .query.paginate(page, current_app.config['BOOKS_PER_PAGE'], True)
+
         data = {"books": self.book_schema.dump(all_books.items, many=True),
-                "pages_amount": pages_amount,
+                "pages_amount": all_books.pages,
                 "current_page": page}
         return data
 

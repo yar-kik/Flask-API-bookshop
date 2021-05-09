@@ -11,8 +11,8 @@ install:
   - pip install coveralls
 script:
   - coverage run --source="auth/","library/" -m unittest
+  - pylint backend --ignore=migrations --load-plugins=pylint_flask,pylint_flask_sqlalchemy
 after_script:
   - coveralls
-  - pylint backend --ignore=migrations --load-plugins=pylint_flask,pylint_flask_sqlalchemy
 #after_success:
 #  - sh .travis/deploy_dockerhub.sh
