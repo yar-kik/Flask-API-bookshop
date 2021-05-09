@@ -1,10 +1,8 @@
 """Module for REST API classes"""
 
-from flask import request, current_app
+from flask import request
 from flask_restful import Resource
-from flask_sqlalchemy import Pagination
 from marshmallow import ValidationError
-from sqlalchemy.orm import Query, Session
 
 from .schemas import BookSchema
 from .models import Book
@@ -21,13 +19,11 @@ class BookListApi(Resource):
         """Get list of book objects"""
         query = request.args
         page: int = query.get('page', 1, type=int)
-        book_service = BookServices(db.session.query(Book))
-        all_books = book_service\
-            .filter_by_category(query.getlist("category"))\
-            .filter_by_publisher(query.getlist("publisher"))\
-            .filter_by_language(query.getlist("language"))\
-            .sort_by_price(query.get("order"))\
-            .query.paginate(page, current_app.config['BOOKS_PER_PAGE'], True)
+        book_service = BookServices(db.session.query(Book))  # TODO: add search query as class param
+        all_books = book_service \
+            .filter_by(query) \
+            .sort_by(query.get("sort"), query.get("order")) \
+            .paginate_by(page)
 
         data = {"books": self.book_schema.dump(all_books.items, many=True),
                 "pages_amount": all_books.pages,

@@ -1,36 +1,35 @@
-from sqlalchemy.orm import Query, Session
+from flask import current_app
+from sqlalchemy import asc, desc
+from sqlalchemy.orm import Query
+from werkzeug.datastructures import ImmutableMultiDict
 
 from library.models import Book
 
 
 class BookServices:
+    ORDER = {"asc": asc, "desc": desc}
+    SORT = {"price": Book.price, "published": Book.published}
+    PARAMETERS = {"category": Book.category,
+                  "publisher": Book.publisher,
+                  "language": Book.language}
+
     def __init__(self, query: Query):
         self.query = query
 
-    def filter_by_category(self, categories: list):
-        if categories:
-            self.query = self.query.filter(Book.category.in_(categories))
+    def filter_by(self, parameters: ImmutableMultiDict):
+        for param in parameters:
+            if param and param in self.PARAMETERS:
+                self.query = self.query.filter(
+                    self.PARAMETERS[param].in_(parameters.getlist(param)))
         return self
 
-    def filter_by_publisher(self, publishers: list):
-        if publishers:
-            self.query = self.query.filter(Book.publisher.in_(publishers))
-        return self
-
-    def filter_by_language(self, languages: list):
-        if languages:
-            self.query = self.query.filter(Book.language.in_(languages))
-        return self
-
-    def sort_by_title(self):
-        self.query = self.query.order_by(Book.title.asc())
-        return self
-
-    def sort_by_price(self, order: str):
-        if order == "asc":
-            self.query = self.query.order_by(Book.price.asc())
-        elif order == "desc":
-            self.query = self.query.order_by(Book.price.desc())
+    def sort_by(self, sort: str, order: str):
+        if order in self.ORDER and sort in self.SORT:
+            self.query = self.query.order_by(self.ORDER[order](self.SORT[sort]))
         else:
             self.query = self.query.order_by(Book.title.asc())
         return self
+
+    def paginate_by(self, page: int):
+        return self.query.paginate(page,
+                                   current_app.config['BOOKS_PER_PAGE'], True)
