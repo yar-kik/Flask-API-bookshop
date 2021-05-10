@@ -85,6 +85,7 @@ class BookApi(Resource):
         cache.delete(f"book:{book_id}")
         return {'message': 'Updated successfully'}, 200
 
+    # pylint: disable=no-self-use
     def delete(self, book_id):
         """Delete book object"""
         book = db.session.query(Book).filter_by(id=book_id).first()

@@ -6,8 +6,8 @@ import datetime
 START_YEAR = 2000
 
 
-def validate_year(x):
-    return START_YEAR <= x <= datetime.datetime.now().year
+def validate_year(year):
+    return START_YEAR <= year <= datetime.datetime.now().year
 
 
 class BookSchema(SQLAlchemyAutoSchema):

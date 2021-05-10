@@ -11,7 +11,7 @@ install:
   - pip install coveralls
 script:
   - coverage run --source="auth/","library/" -m unittest
-  - pylint backend --ignore=migrations --load-plugins=pylint_flask,pylint_flask_sqlalchemy
+  - cd ../ && pylint backend --ignore=migrations --rcfile=backend/.pylintrc
 after_script:
   - coveralls
 #after_success:

@@ -1,3 +1,5 @@
+"""Module for testing library views"""
+
 import unittest
 import json
 from flask import Response
@@ -82,7 +84,7 @@ class TestBookApi(unittest.TestCase):
             headers={"Content-Type": "application/json"}
         )
         self.assertEqual(response.status_code, 201)
-        response: Response = self.client.get(f'/books/1')
+        response: Response = self.client.get('/books/1')
         self.assertEqual(response.status_code, 200)
         self.assertEqual("Single Book", response.json.get("title"))
 
