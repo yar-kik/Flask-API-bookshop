@@ -1,3 +1,5 @@
+"""Module for book database services"""
+
 from flask import current_app
 from sqlalchemy import asc, desc
 from sqlalchemy.orm import Query
@@ -7,6 +9,8 @@ from library.models import Book
 
 
 class BookServices:
+    """Class to work with database"""
+
     ORDER = {"asc": asc, "desc": desc}
     SORT = {"price": Book.price, "published": Book.published}
     PARAMETERS = {"category": Book.category,
@@ -17,6 +21,7 @@ class BookServices:
         self.query = query
 
     def filter_by(self, parameters: ImmutableMultiDict):
+        """Filter books by query parameters"""
         for param in parameters:
             if param and param in self.PARAMETERS:
                 self.query = self.query.filter(
@@ -24,6 +29,7 @@ class BookServices:
         return self
 
     def sort_by(self, sort: str, order: str):
+        """Sort books by query parameters"""
         if order in self.ORDER and sort in self.SORT:
             self.query = self.query.order_by(self.ORDER[order](self.SORT[sort]))
         else:
@@ -31,5 +37,6 @@ class BookServices:
         return self
 
     def paginate_by(self, page: int):
+        """Paginate books by page number"""
         return self.query.paginate(page,
                                    current_app.config['BOOKS_PER_PAGE'], True)

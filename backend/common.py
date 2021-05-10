@@ -1,3 +1,5 @@
+"""Module for common function and decorators"""
+
 from functools import wraps
 
 import jwt
@@ -8,6 +10,7 @@ from utils import db
 
 
 def token_required(function):
+    """Function to check user token"""
     @wraps(function)
     def wrapper(*args, **kwargs):
         token = request.headers.get("X-API-KEY", '')

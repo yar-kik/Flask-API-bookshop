@@ -1,3 +1,5 @@
+"""Module for auth controllers (views)"""
+
 from datetime import datetime, timedelta
 
 import jwt
@@ -12,9 +14,11 @@ from utils import db
 
 
 class AuthRegisterApi(Resource):
+    """Class for user registration"""
     user_schema = UserSchema()
 
     def post(self):
+        """Function for creating new user"""
         try:
             user = self.user_schema.load(request.json, session=db.session)
         except ValidationError as e:
@@ -29,7 +33,10 @@ class AuthRegisterApi(Resource):
 
 
 class AuthLoginApi(Resource):
+    """Class for user login"""
+    # pylint: disable=no-self-use
     def get(self):
+        """Function for user login"""
         auth = request.authorization
         if not auth:
             return "", 401, \

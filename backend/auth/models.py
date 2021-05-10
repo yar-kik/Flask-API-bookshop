@@ -1,7 +1,9 @@
+"""Module for library database models"""
+
+from uuid import uuid4
+from utils import db
 from sqlalchemy.ext.hybrid import hybrid_method
 from werkzeug.security import generate_password_hash, check_password_hash
-from utils import db
-from uuid import uuid4
 
 
 class User(db.Model):

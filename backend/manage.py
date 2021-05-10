@@ -1,3 +1,5 @@
+"""Module for managing application"""
+
 import os
 
 from flask_migrate import MigrateCommand

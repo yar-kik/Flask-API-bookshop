@@ -3,11 +3,10 @@
 from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
+from utils import db, cache
 
 from .schemas import BookSchema
 from .models import Book
-
-from utils import db, cache
 from .services import BookServices
 
 
@@ -19,7 +18,8 @@ class BookListApi(Resource):
         """Get list of book objects"""
         query = request.args
         page: int = query.get('page', 1, type=int)
-        book_service = BookServices(db.session.query(Book))  # TODO: add search query as class param
+        book_service = BookServices(
+            db.session.query(Book))  # TODO: add search query as class param
         all_books = book_service \
             .filter_by(query) \
             .sort_by(query.get("sort"), query.get("order")) \

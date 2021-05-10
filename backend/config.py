@@ -1,9 +1,13 @@
+"""Module for different configurations such as 'production', 'development'
+or 'testing.'"""
+
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    """Base configurations"""
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
@@ -12,9 +16,9 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'username')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'password')
 
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'
-    FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN', 'flask_admin')
+    FLASK_MAIL_SUBJECT_PREFIX = '[Flasky]'
+    FLASK_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'
+    FLASK_ADMIN = os.environ.get('FLASKY_ADMIN', 'flask_admin')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOKS_PER_PAGE = os.environ.get('BOOKS_PER_PAGE', 5)
@@ -23,10 +27,12 @@ class Config:
 
     @staticmethod
     def init_app(app):
-        pass
+        """Function for application initialization. It could be add
+        some functionality in future"""
 
 
 class DevelopmentConfig(Config):
+    """Configurations for development"""
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "SimpleCache"
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get("DEV_DATABASE_URL") or \
@@ -35,6 +41,7 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    """Configurations for testing"""
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "NullCache"
     TESTING = True
     DEBUG = True
@@ -43,6 +50,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    """Configurations for production"""
     CACHE_TYPE = os.environ.get("CACHE_TYPE") or "RedisCache"
     CACHE_REDIS_URL = os.environ.get("CACHE_REDIS_URL") or \
                       "redis://localhost:6379"

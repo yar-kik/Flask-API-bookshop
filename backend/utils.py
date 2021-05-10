@@ -1,3 +1,5 @@
+"""Module for application utilities"""
+
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +12,7 @@ cache = Cache()
 
 
 def create_app(config_name) -> Flask:
+    """Function to create a Flask application"""
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
@@ -23,6 +26,7 @@ def create_app(config_name) -> Flask:
     app.register_blueprint(library)
     app.register_blueprint(auth, url_prefix="/auth")
 
+    # pylint: disable=unused-import
     from library.models import Book
     from auth.models import User
 
