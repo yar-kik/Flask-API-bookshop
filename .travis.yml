@@ -11,8 +11,7 @@ install:
   - pip install coveralls
 script:
   - coverage run --source="auth/","library/" -m unittest
-  - cd ../ && pylint backend --ignore=migrations --rcfile=backend/.pylintrc --fail-under=9
-after_script:
   - coveralls
+  - cd ../ && pylint backend --ignore=migrations --rcfile=backend/.pylintrc --fail-under=9
 #after_success:
 #  - sh .travis/deploy_dockerhub.sh
