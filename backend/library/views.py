@@ -16,15 +16,10 @@ class BookListApi(Resource):
 
     def get(self):
         """Get list of book objects"""
-        query = request.args
-        page: int = query.get('page', 1, type=int)
-        book_service = BookServices(
-            db.session.query(Book))  # TODO: add search query as class param
-        all_books = book_service \
-            .filter_by(query) \
-            .sort_by(query.get("sort"), query.get("order")) \
-            .paginate_by(page)
-
+        page = request.args.get('page', 1, type=int)
+        book_service = BookServices(db.session.query(Book), request.args)
+        all_books = book_service.filter_by_query() \
+            .sort_by_query().paginate_by_query()
         data = {"books": self.book_schema.dump(all_books.items, many=True),
                 "pages_amount": all_books.pages,
                 "current_page": page}

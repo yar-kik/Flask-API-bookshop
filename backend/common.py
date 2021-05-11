@@ -3,9 +3,10 @@
 from functools import wraps
 
 import jwt
-from flask import request, current_app
+from flask import request
 
 from auth.models import User
+from auth.services import decode_auth_token
 from utils import db
 
 
@@ -16,19 +17,15 @@ def token_required(function):
         token = request.headers.get("X-API-KEY", '')
         print(token)
         if not token:
-            return "", 401, \
-                   {"WWW-Authenticate": "Basic realm='Authentication required'"}
+            return {"message": "Token should be provided"}, 401
         try:
-            print(current_app.config["SECRET_KEY"])
-            uuid = jwt.decode(token, current_app.config["SECRET_KEY"],
-                              algorithms=["HS256"])["user_id"]
+            uuid = decode_auth_token(token)["sub"]
         except (KeyError, jwt.ExpiredSignatureError):
-            return "", 401, \
-                   {"WWW-Authenticate": "Basic realm='Authentication required'"}
+            return {"message": "Signature expired. Please log in again"}, 401
+        except jwt.InvalidTokenError:
+            return {"message": 'Invalid token. Please log in again.'}, 401
         user = db.session.query(User).filter_by(uuid=uuid).first()
         if not user:
-            return "", 401, \
-                   {"WWW-Authenticate": "Basic realm='Authentication required'"}
+            return {"message": "User doesn't exist"}, 401
         return function(*args, **kwargs)
-
     return wrapper

@@ -10,8 +10,8 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script:
-  - coverage run --source="auth/","library/" -m unittest
-  - coveralls
+  - coverage run --source="." -m unittest && coveralls
+  - coverage report --fail-under=80
   - cd ../ && pylint backend --ignore=migrations --rcfile=backend/.pylintrc --fail-under=9
 #after_success:
 #  - sh .travis/deploy_dockerhub.sh

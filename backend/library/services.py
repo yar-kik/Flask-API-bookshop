@@ -17,26 +17,33 @@ class BookServices:
                   "publisher": Book.publisher,
                   "language": Book.language}
 
-    def __init__(self, query: Query):
-        self.query = query
+    def __init__(self, db_query: Query, search_query: ImmutableMultiDict):
+        self.db_query = db_query
+        self.search_query = search_query
 
-    def filter_by(self, parameters: ImmutableMultiDict):
+    def filter_by_query(self):
         """Filter books by query parameters"""
-        for param in parameters:
-            if param and param in self.PARAMETERS:
-                self.query = self.query.filter(
-                    self.PARAMETERS[param].in_(parameters.getlist(param)))
+        for param in self.search_query:
+            if param in self.PARAMETERS:
+                self.db_query = self.db_query.filter(
+                    self.PARAMETERS[param].in_(
+                        self.search_query.getlist(param)))
         return self
 
-    def sort_by(self, sort: str, order: str):
+    def sort_by_query(self):
         """Sort books by query parameters"""
+        order = self.search_query.get("order")
+        sort = self.search_query.get("sort")
         if order in self.ORDER and sort in self.SORT:
-            self.query = self.query.order_by(self.ORDER[order](self.SORT[sort]))
+            self.db_query = self.db_query.order_by(
+                self.ORDER[order](self.SORT[sort]))
         else:
-            self.query = self.query.order_by(Book.title.asc())
+            self.db_query = self.db_query.order_by(Book.title.asc())
         return self
 
-    def paginate_by(self, page: int):
+    def paginate_by_query(self):
         """Paginate books by page number"""
-        return self.query.paginate(page,
-                                   current_app.config['BOOKS_PER_PAGE'], True)
+        page = self.search_query.get('page', 1, type=int)
+        return self.db_query.paginate(page,
+                                      current_app.config['BOOKS_PER_PAGE'],
+                                      True)

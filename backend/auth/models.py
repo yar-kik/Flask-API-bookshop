@@ -12,7 +12,7 @@ class User(db.Model):
 
     # TODO: first/last name, date register, phone number?
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(64), unique=True, index=True)
+    email = db.Column(db.String(64), unique=True, index=True, nullable=False)
     username = db.Column(db.String(64), nullable=False, unique=True, index=True)
     password = db.Column(db.String(128), nullable=False)
     uuid = db.Column(db.String(36))
