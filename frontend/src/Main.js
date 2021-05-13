@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {
-    NavDropdown,
     Button,
     Container,
     Navbar,
@@ -15,9 +14,13 @@ import BookDetail from "./BookDetail";
 import BookList from "./BookList"
 import NotFound from "./NotFound";
 import ScrollToTop from "./ScrollToTop";
+import Registration from "./Registration"
+import Login from "./Login";
+import PrivateRoute from "./PrivateRoute";
 
 class Main extends Component {
     render() {
+        const user = localStorage.getItem("userToken")
         return (
             <BrowserRouter>
                 <Navbar bg="dark" variant="dark" collapseOnSelect expand="md">
@@ -28,6 +31,9 @@ class Main extends Component {
                         <Nav className="mr-auto">
                             <Nav.Link as={NavLink}
                                       to="/books">Assortment</Nav.Link>
+                            {!user ? <Nav.Link as={NavLink}
+                                      to="/auth/registration">Registration</Nav.Link> : <Nav.Link as={NavLink}
+                                      to="/auth/logout">Logout</Nav.Link>}
                         </Nav>
                         <Form inline>
                             <FormControl type="text" placeholder="Search here..."
@@ -42,12 +48,13 @@ class Main extends Component {
                         <Route exact path="/" component={Home}/>
                         <Route path="/books/:id" component={BookDetail}/>
                         <Route path="/books" component={BookList}/>
+                        <PrivateRoute user={user} path="/auth/registration" component={Registration}/>
+                        <PrivateRoute user={user} path="/auth/login" component={Login}/>
                         <Route component={NotFound}/>
                     </Switch>
                 </Container>
             </BrowserRouter>
-        )
-            ;
+        );
     }
 }
 

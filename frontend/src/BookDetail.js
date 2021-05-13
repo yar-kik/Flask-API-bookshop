@@ -3,7 +3,6 @@ import {Button, Row, Col, Image, Card, Table} from "react-bootstrap";
 import axios from "axios";
 import NotFound from "./NotFound";
 import {ModalEdit, ModalConfirm} from "./Modals"
-import {Link} from "react-router-dom";
 
 class BookDetail extends Component {
     constructor(props) {

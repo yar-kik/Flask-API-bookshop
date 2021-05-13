@@ -13,7 +13,7 @@ from utils import db
 def register_user(self, username: str, email: str, password: str) -> Response:
     """Function to register new user"""
     return self.client.post(
-        "/auth/register",
+        "/auth/registration",
         data=json.dumps({"username": username,
                          "email": email,
                          "password": password}),
@@ -25,7 +25,7 @@ def login_user(self, username: str, password: str) -> Response:
     """Function to login user"""
     user_data = f"{username}:{password}".encode("utf-8")
     credentials = b64encode(user_data).decode('utf-8')
-    return self.client.get(
+    return self.client.post(
         "/auth/login",
         data=json.dumps({"username": username,
                          "password": password}),
@@ -40,7 +40,7 @@ class TestAuthViews(BaseCase):
     def test_registration(self) -> None:
         """Test for user registration"""
         response = self.client.post(
-            "/auth/register",
+            "/auth/registration",
             data=json.dumps({"username": "username",
                              "email": "email@gmail.com"}),
             headers={"Content-Type": "application/json"}
@@ -99,7 +99,7 @@ class TestAuthViews(BaseCase):
         self.assertEqual(response.json['message'], 'Successfully registered')
         self.assertEqual(response.status_code, 201)
 
-        response = self.client.get(
+        response = self.client.post(
             "/auth/login",
             data=json.dumps({"username": 'user',
                              "password": 'pass123'}),

@@ -36,7 +36,7 @@ class AuthLoginApi(Resource):
     """Class for user login"""
 
     # pylint: disable=no-self-use
-    def get(self):
+    def post(self):
         """Function for user login"""
         auth = request.authorization
         if not auth:

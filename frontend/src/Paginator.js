@@ -14,8 +14,8 @@ class Paginator extends Component {
         for (let i = 1; i <= amountPages; i++) {
             if (i === 1 ||
                 i === amountPages ||
-                (currentPage - delta) <= i &&
-                i < (currentPage + delta + 1)) {
+                ((currentPage - delta) <= i &&
+                i < (currentPage + delta + 1))) {
                 pageNumbers.push(i);
             }
         }
