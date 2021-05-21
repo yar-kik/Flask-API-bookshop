@@ -8,7 +8,7 @@ from flask import current_app
 def encode_auth_token(user_id: str) -> str:
     """Generates the Auth Token"""
     payload = {
-        'exp': datetime.datetime.now() + datetime.timedelta(hours=1),
+        'exp': datetime.datetime.now() + datetime.timedelta(minutes=15),
         'iat': datetime.datetime.now(),
         'sub': user_id
     }

@@ -6,7 +6,9 @@ import {Col, Row} from "react-bootstrap";
 class Registration extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            error: ""
+        };
     }
 
     componentDidMount() {
@@ -16,7 +18,10 @@ class Registration extends Component {
         axios
             .post("/auth/registration", data)
             .then(this.props.history.replace("/auth/login"))
-            .catch(error => console.error(error))
+            .catch(error => {
+                console.error(error);
+                this.setState({error: error.response.data.message})
+            })
     }
 
     handleRegistration = (data) => {
@@ -24,10 +29,12 @@ class Registration extends Component {
     }
 
     render() {
-        return(
+        return (
             <Row>
                 <Col md={{span: 5, offset: 3}}>
-                    <RegistrationForm registrationSubmit={this.handleRegistration}/>
+                    <RegistrationForm
+                        registrationSubmit={this.handleRegistration}
+                        error={this.state.error}/>
                 </Col>
             </Row>
         )

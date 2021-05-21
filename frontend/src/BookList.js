@@ -26,7 +26,6 @@ class BookList extends Component {
     }
 
     componentDidMount() {
-        console.log(localStorage.getItem("userToken"));
         this.getBookList();
     }
 

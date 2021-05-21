@@ -15,7 +15,6 @@ def token_required(function):
     @wraps(function)
     def wrapper(*args, **kwargs):
         token = request.headers.get("X-API-KEY", '')
-        print(token)
         if not token:
             return {"message": "Token should be provided"}, 401
         try:
