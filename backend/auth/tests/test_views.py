@@ -1,11 +1,13 @@
 """Module for auth views (controllers) testing"""
 
 import json
+import time
 from base64 import b64encode
 
 from flask import Response
 
 from auth.models import User
+from auth.services import encode_auth_token
 from auth.tests import BaseCase
 from utils import db
 
@@ -164,8 +166,10 @@ class TestLogoutView(BaseCase):
 
     def test_logout_expired_token(self):
         """Test user logout if request has expired token"""
+        expired_token = encode_auth_token("user_id", {"seconds": 0})
+        time.sleep(1)
         response = self.client.get(
             "/auth/logout",
-            headers={"Authorization": f"Bearer {EXPIRED_TOKEN}"})
+            headers={"Authorization": f"Bearer {expired_token}"})
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json["message"], "Signature expired")
