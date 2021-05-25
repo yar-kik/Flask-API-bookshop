@@ -16,7 +16,7 @@ class User(db.Model):
     username = db.Column(db.String(64), nullable=False, unique=True,
                          index=True)  # TODO: change to length 32
     password = db.Column(db.String(128), nullable=False)
-    uuid = db.Column(db.String(36))
+    uuid = db.Column(db.String(36))  # TODO: add index=True
     is_admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, *args, **kwargs):
