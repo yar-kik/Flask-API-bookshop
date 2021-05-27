@@ -162,7 +162,8 @@ class TestLogoutView(BaseCase):
         response = self.client.get("/auth/logout",
                                    headers={"Authorization": "Bearer abc123"})
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json["message"], "Invalid token")
+        self.assertEqual(response.json["message"],
+                         "Invalid token. Please log in again.")
 
     def test_logout_expired_token(self):
         """Test user logout if request has expired token"""
@@ -172,4 +173,5 @@ class TestLogoutView(BaseCase):
             "/auth/logout",
             headers={"Authorization": f"Bearer {expired_token}"})
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json["message"], "Signature expired")
+        self.assertEqual(response.json["message"],
+                         "Signature expired. Please log in again")

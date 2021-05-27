@@ -1,5 +1,4 @@
 """Module for auth controllers (views)"""
-import jwt
 from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
@@ -8,7 +7,8 @@ from sqlalchemy.exc import IntegrityError
 
 from auth.models import User
 from auth.schemas import UserSchema
-from auth.services import encode_auth_token, decode_auth_token
+from auth.services import encode_auth_token
+from common import token_required, get_token
 from utils import db, cache
 
 expiration = {"minutes": 5}  # TODO: move to configs
@@ -58,18 +58,9 @@ class LogoutApi(Resource):
     """Class for user logout"""
 
     # pylint: disable=no-self-use
+    @token_required
     def get(self):
         """Function for user logout"""
-        auth_header = request.headers.get('Authorization')
-        if not auth_header or not auth_header.split()[1:]:
-            return {"message": "Authentication required"}, 401, \
-                   {"WWW-Authenticate": "Bearer realm='Token required'"}
-        token = auth_header.split()[1]
-        try:
-            decode_auth_token(token)
-        except jwt.ExpiredSignatureError:
-            return {"message": "Signature expired"}, 401
-        except jwt.InvalidTokenError:
-            return {"message": 'Invalid token'}, 400
+        token = get_token()
         cache.add(f"blacklisted_token:{token}", token, timeout=expiration)
         return {"message": "Successfully logged out"}, 200
