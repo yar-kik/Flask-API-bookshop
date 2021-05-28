@@ -1,13 +1,40 @@
 """Module for common functions and decorators"""
 
+import datetime
 from functools import wraps
-from typing import Callable, Optional
+from typing import Callable, Optional, Dict
 
+from flask import request, current_app
 import jwt
-from flask import request
 
-from auth.services import decode_auth_token
 from utils import cache
+
+
+def encode_auth_token(user_id: str,
+                      expiration: Dict[str, int] = None,
+                      admin: bool = False) -> str:
+    """Generates the Auth Token"""
+    if expiration is None:
+        expiration = {"minutes": 15}
+    payload = {
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(**expiration),
+        'iat': datetime.datetime.utcnow(),
+        'sub': user_id,
+        'admin': admin
+    }
+    return jwt.encode(
+        payload,
+        current_app.config.get('SECRET_KEY'),
+        algorithm='HS256'
+    )
+
+
+def decode_auth_token(auth_token: str) -> dict:
+    """Decodes the auth token"""
+    payload = jwt.decode(auth_token,
+                         current_app.config.get('SECRET_KEY'),
+                         algorithms="HS256")
+    return payload
 
 
 def get_token() -> Optional[str]:
@@ -31,8 +58,8 @@ def token_required(function: Callable):
         if cache.get(f"blacklisted_token:{token}"):
             return {"message": "Token is already blacklisted"}, 403
         try:
-            decode_auth_token(token)["sub"]
-        except (KeyError, jwt.ExpiredSignatureError):
+            decode_auth_token(token)
+        except jwt.ExpiredSignatureError:
             return {"message": "Signature expired. Please log in again"}, 401
         except jwt.InvalidTokenError:
             return {"message": 'Invalid token. Please log in again.'}, 400

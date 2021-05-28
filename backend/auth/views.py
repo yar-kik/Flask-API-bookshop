@@ -7,8 +7,7 @@ from sqlalchemy.exc import IntegrityError
 
 from auth.models import User
 from auth.schemas import UserSchema
-from auth.services import encode_auth_token
-from common import token_required, get_token
+from common import token_required, get_token, encode_auth_token
 from utils import db, cache
 
 expiration = {"minutes": 5}  # TODO: move to configs
@@ -49,7 +48,7 @@ class LoginApi(Resource):
             or_(User.username == username, User.email == username)).first()
         if not user or not user.verify_password(auth.get("password", '')):
             return {"message": "User doesn't exist or wrong password"}, 404
-        token = encode_auth_token(user.uuid, expiration)
+        token = encode_auth_token(user.uuid, expiration, user.is_admin)
         return {"message": "Successfully logged in",
                 "token": token}, 200
 
@@ -62,5 +61,6 @@ class LogoutApi(Resource):
     def get(self):
         """Function for user logout"""
         token = get_token()
-        cache.add(f"blacklisted_token:{token}", token, timeout=expiration)
+        # TODO: don't hardcode
+        cache.add(f"blacklisted_token:{token}", token, timeout=5 * 60)
         return {"message": "Successfully logged out"}, 200
