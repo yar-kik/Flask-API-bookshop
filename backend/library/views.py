@@ -3,6 +3,8 @@
 from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
+
+from common import token_required, admin_required
 from utils import db, cache
 
 from .schemas import BookSchema
@@ -25,6 +27,8 @@ class BookListApi(Resource):
                 "current_page": page}
         return data
 
+    @token_required
+    @admin_required
     def post(self):
         """Create new book object"""
         try:
@@ -49,6 +53,8 @@ class BookApi(Resource):
         cache.set(f"book:{book_id}", book)
         return self.book_schema.dump(book)
 
+    @token_required
+    @admin_required
     def put(self, book_id):
         """Update book object. Should be all fields, else some information will
         lost"""
@@ -64,6 +70,8 @@ class BookApi(Resource):
         cache.delete(f"book:{book_id}")
         return self.book_schema.dump(book), 200
 
+    @token_required
+    @admin_required
     def patch(self, book_id):
         """Update book object. Could be only one field"""
         book = db.session.query(Book).filter_by(id=book_id).first()
@@ -81,6 +89,8 @@ class BookApi(Resource):
         return {'message': 'Updated successfully'}, 200
 
     # pylint: disable=no-self-use
+    @token_required
+    @admin_required
     def delete(self, book_id):
         """Delete book object"""
         book = db.session.query(Book).filter_by(id=book_id).first()

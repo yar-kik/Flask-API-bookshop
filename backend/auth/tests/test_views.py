@@ -1,44 +1,9 @@
 """Module for auth views (controllers) testing"""
 
 import json
-import time
-from base64 import b64encode
-
-from flask import Response
-
 from auth.models import User
-from auth.services import encode_auth_token
-from auth.tests import BaseCase
+from tests import BaseCase, register_user, login_user
 from utils import db
-
-EXPIRED_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.' \
-                'eyJleHAiOjE2MjE5NjQ2NDgsImlhdCI6MTYyM' \
-                'Tk2NDY0Nywic3ViIjoidXNlcl9pZCJ9.ykZq7d3' \
-                'RUW2gCXsSmTKJw0pm8AmiLjzDN4VS6HXCYNY'
-
-
-def register_user(self, username: str, email: str, password: str) -> Response:
-    """Function to register new user"""
-    return self.client.post(
-        "/auth/registration",
-        data=json.dumps({"username": username,
-                         "email": email,
-                         "password": password}),
-        headers={"Content-Type": "application/json"}
-    )
-
-
-def login_user(self, username: str, password: str) -> Response:
-    """Function to login user"""
-    user_data = f"{username}:{password}".encode("utf-8")
-    credentials = b64encode(user_data).decode('utf-8')
-    return self.client.post(
-        "/auth/login",
-        data=json.dumps({"username": username,
-                         "password": password}),
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Basic {credentials}"}
-    )
 
 
 class TestRegistrationView(BaseCase):
@@ -139,37 +104,3 @@ class TestLogoutView(BaseCase):
                                    headers={"Authorization": f"Bearer {token}"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json["message"], "Successfully logged out")
-
-    def test_logout_without_header(self):
-        """Test user logout if request hasn't necessary header"""
-        response = self.client.get("/auth/logout")
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.headers["WWW-Authenticate"],
-                         "Bearer realm='Token required'")
-        self.assertEqual(response.json['message'], "Authentication required")
-
-    def test_logout_without_token(self):
-        """Test user logout if request hasn't token in header"""
-        response = self.client.get("/auth/logout",
-                                   headers={"Authorization": "Bearer "})
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.headers["WWW-Authenticate"],
-                         "Bearer realm='Token required'")
-        self.assertEqual(response.json['message'], "Authentication required")
-
-    def test_logout_invalid_token(self):
-        """Test user logout if request has invalid token"""
-        response = self.client.get("/auth/logout",
-                                   headers={"Authorization": "Bearer abc123"})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json["message"], "Invalid token")
-
-    def test_logout_expired_token(self):
-        """Test user logout if request has expired token"""
-        expired_token = encode_auth_token("user_id", {"seconds": 0})
-        time.sleep(1)
-        response = self.client.get(
-            "/auth/logout",
-            headers={"Authorization": f"Bearer {expired_token}"})
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json["message"], "Signature expired")

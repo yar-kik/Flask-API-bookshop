@@ -1,37 +1,24 @@
 """Module for testing library views"""
 
-import unittest
 import json
 from flask import Response
-from utils import create_app, db
+
+from tests import AdminCase
 
 
-class TestBookListApi(unittest.TestCase):
+class TestBookListApi(AdminCase):
     """Testing the book list test case"""
-
-    def setUp(self) -> None:
-        """
-        Define test variables and initialize app.
-        """
-        self.app = create_app("testing")
-        self.client = self.app.test_client()
-        self.book_data = {"title": "Book title",
-                          "author": "Book author",
-                          "price": 200}
-        self.json_data = json.dumps(self.book_data)
-        with self.app.app_context():
-            db.create_all()
 
     def test_book_creation(self) -> None:
         """
         Test API can create a book (with POST request)
         """
         response: Response = self.client.post(
-            '/books/', data=self.json_data,
-            headers={"Content-Type": "application/json"}
+            '/books/', data=self.book_data,
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
-        self.assertEqual("Book title", response.json.get("title"))
+        self.assertEqual("Single Book", response.json.get("title"))
 
     def test_failed_book_creation(self) -> None:
         """
@@ -41,7 +28,7 @@ class TestBookListApi(unittest.TestCase):
         response: Response = self.client.post(
             '/books/', data=json.dumps({"title": "Book title",
                                         "fake_field": "Fake data"}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 400)
 
@@ -50,8 +37,8 @@ class TestBookListApi(unittest.TestCase):
         Test API can get a book list (with GET request)
         """
         response: Response = self.client.post(
-            '/books/', data=self.json_data,
-            headers={"Content-Type": "application/json"}
+            '/books/', data=self.book_data,
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.get('/books/')
@@ -60,20 +47,8 @@ class TestBookListApi(unittest.TestCase):
         self.assertEqual(1, len(response.json.get("books")))
 
 
-class TestBookApi(unittest.TestCase):
+class TestBookApi(AdminCase):
     """Testing the book get, update and delete test cases"""
-
-    def setUp(self) -> None:
-        """
-        Define test variables and initialize app.
-        """
-        self.app = create_app("testing")
-        self.client = self.app.test_client()
-        self.book_data = json.dumps({"title": "Single Book",
-                                     "author": "Book author",
-                                     "price": 200})
-        with self.app.app_context():
-            db.create_all()
 
     def test_get_book_by_id(self) -> None:
         """
@@ -81,7 +56,7 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.get('/books/1')
@@ -102,14 +77,14 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.put(
             '/books/1', data=json.dumps({"title": "New title",
                                          "author": "Book author",
                                          "price": 250}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual("New title", response.json.get("title"))
@@ -121,7 +96,7 @@ class TestBookApi(unittest.TestCase):
         response: Response = self.client.put(
             '/books/123', data=json.dumps({"title": "New title",
                                            "author": "Book author"}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {'message': "Not found"})
@@ -132,13 +107,13 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.put(
             '/books/1', data=json.dumps({"title": "New title",
                                          "fake_field": "Fake data"}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 400)
 
@@ -148,12 +123,12 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.patch(
             '/books/1', data=json.dumps({"author": "New author"}),
-            headers={"Content-Type": "application/json"})
+            headers=self.headers)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {'message': 'Updated successfully'})
 
@@ -163,7 +138,7 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.patch(
             '/books/1', data=json.dumps({"author": "New author"}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {'message': "Not found"})
@@ -174,12 +149,12 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
         response: Response = self.client.patch(
             '/books/1', data=json.dumps({"fake_field": "Fake data"}),
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 400)
 
@@ -189,10 +164,11 @@ class TestBookApi(unittest.TestCase):
         """
         response: Response = self.client.post(
             '/books/', data=self.book_data,
-            headers={"Content-Type": "application/json"}
+            headers=self.headers
         )
         self.assertEqual(response.status_code, 201)
-        response: Response = self.client.delete('/books/1')
+        response: Response = self.client.delete('/books/1',
+                                                headers=self.headers)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(response.data)
 
@@ -200,6 +176,7 @@ class TestBookApi(unittest.TestCase):
         """
         Test API can't delete a book by id (with DELETE request) if not exist
         """
-        response: Response = self.client.delete('/books/123')
+        response: Response = self.client.delete('/books/123',
+                                                headers=self.headers)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json, {'message': "Not found"})
