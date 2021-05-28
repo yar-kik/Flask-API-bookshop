@@ -2,21 +2,9 @@
 
 import time
 
-from auth.models import User
-from auth.tests import BaseCase
-from auth.tests.test_views import register_user, login_user
+from auth.tests.test_views import login_user
 from common import get_token, encode_auth_token
-from library.models import Book
-from utils import db
-
-
-def create_book() -> None:
-    """Create new book"""
-    book = Book(title="Book title",
-                author="Book author",
-                price=200)
-    db.session.add(book)
-    db.session.commit()
+from tests import BaseCase, create_book, create_user, create_admin
 
 
 class TestCommon(BaseCase):
@@ -59,12 +47,7 @@ class TestCommon(BaseCase):
     def test_admin_required_if_admin(self):
         """Test admin_required decorator if user is admin"""
         create_book()
-        user = User(username="user",
-                    email="example@gmail.com",
-                    password="pass123",
-                    is_admin=True)
-        db.session.add(user)
-        db.session.commit()
+        create_admin()
         response = login_user(self, 'example@gmail.com', 'pass123')
         token = response.json["token"]
         response = self.client.delete("/books/1",
@@ -76,9 +59,7 @@ class TestCommon(BaseCase):
     def test_admin_required_if_not_admin(self):
         """Test admin_required decorator if user is not admin"""
         create_book()
-        register_user(self, username="user",
-                      email="example@gmail.com",
-                      password="pass123")
+        create_user()
         response = login_user(self, 'example@gmail.com', 'pass123')
         token = response.json["token"]
         response = self.client.delete("/books/1",
@@ -89,12 +70,6 @@ class TestCommon(BaseCase):
 
     def test_encode_auth_token(self):
         """Test auth token encode"""
-        user = User(
-            username="username",
-            email='test@test.com',
-            password='test'
-        )
-        db.session.add(user)
-        db.session.commit()
+        user = create_user()
         auth_token = encode_auth_token(user.uuid)
         self.assertTrue(isinstance(auth_token, str))

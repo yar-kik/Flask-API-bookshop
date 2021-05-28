@@ -3,10 +3,10 @@
 import json
 from flask import Response
 
-from library.tests import BaseCase
+from tests import AdminCase
 
 
-class TestBookListApi(BaseCase):
+class TestBookListApi(AdminCase):
     """Testing the book list test case"""
 
     def test_book_creation(self) -> None:
@@ -47,7 +47,7 @@ class TestBookListApi(BaseCase):
         self.assertEqual(1, len(response.json.get("books")))
 
 
-class TestBookApi(BaseCase):
+class TestBookApi(AdminCase):
     """Testing the book get, update and delete test cases"""
 
     def test_get_book_by_id(self) -> None:

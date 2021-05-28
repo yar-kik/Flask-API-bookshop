@@ -1,42 +1,9 @@
 """Module for auth views (controllers) testing"""
 
 import json
-from base64 import b64encode
-
-from flask import Response
-
 from auth.models import User
-from auth.tests import BaseCase
+from tests import BaseCase, register_user, login_user
 from utils import db
-
-EXPIRED_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.' \
-                'eyJleHAiOjE2MjE5NjQ2NDgsImlhdCI6MTYyM' \
-                'Tk2NDY0Nywic3ViIjoidXNlcl9pZCJ9.ykZq7d3' \
-                'RUW2gCXsSmTKJw0pm8AmiLjzDN4VS6HXCYNY'
-
-
-def register_user(self, username: str, email: str, password: str) -> Response:
-    """Function to register new user"""
-    return self.client.post(
-        "/auth/registration",
-        data=json.dumps({"username": username,
-                         "email": email,
-                         "password": password}),
-        headers={"Content-Type": "application/json"}
-    )
-
-
-def login_user(self, username: str, password: str) -> Response:
-    """Function to login user"""
-    user_data = f"{username}:{password}".encode("utf-8")
-    credentials = b64encode(user_data).decode('utf-8')
-    return self.client.post(
-        "/auth/login",
-        data=json.dumps({"username": username,
-                         "password": password}),
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Basic {credentials}"}
-    )
 
 
 class TestRegistrationView(BaseCase):
