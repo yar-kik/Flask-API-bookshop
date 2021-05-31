@@ -5,6 +5,7 @@ from library.search import add_to_index, remove_from_index, query_index
 from utils import db
 
 
+# pylint: disable=protected-access
 class SearchableMixin:
     """Mixin to implement search functions"""
 
@@ -13,8 +14,8 @@ class SearchableMixin:
         """Search by query function"""
         ids = query_index(cls.__tablename__, expression, page,
                           current_app.config["SEARCH_RESULT_PER_PAGE"])
-        if not len(ids):
-            return
+        if not ids:
+            return None
         when = [(id_, i) for i, id_ in enumerate(ids)]
         return cls.query.filter(cls.id.in_(ids)).order_by(
             db.case(when, value=cls.id))
@@ -49,5 +50,6 @@ class SearchableMixin:
             add_to_index(cls.__tablename__, obj)
 
 
+# pylint: disable=no-member
 db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
