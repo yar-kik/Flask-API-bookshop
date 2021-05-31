@@ -1,5 +1,5 @@
 """Module for application utilities"""
-
+from elasticsearch import Elasticsearch
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +17,9 @@ def create_app(config_name) -> Flask:
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    elasticsearch_url = app.config["ELASTICSEARCH_URL"]
+    app.elasticsearch = Elasticsearch(elasticsearch_url) \
+        if elasticsearch_url else None
     db.init_app(app)
     migrate.init_app(app, db)
     cache.init_app(app)

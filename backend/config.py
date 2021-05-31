@@ -21,7 +21,9 @@ class Config:
     FLASK_ADMIN = os.environ.get('FLASKY_ADMIN', 'flask_admin')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     BOOKS_PER_PAGE = os.environ.get('BOOKS_PER_PAGE', 5)
+    SEARCH_RESULT_PER_PAGE = os.environ.get("SEARCH_RESULT_PER_PAGE", 5)
 
     CACHE_DEFAULT_TIMEOUT = os.environ.get("CACHE_DEFAULT_TIMEOUT", 60 * 60)
 

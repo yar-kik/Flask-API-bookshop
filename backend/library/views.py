@@ -99,3 +99,21 @@ class BookApi(Resource):
         book.delete()
         cache.delete(f"book:{book_id}")
         return '', 204
+
+
+class SearchApi(Resource):
+    """Class for searching book by url-query"""
+    book_schema = BookSchema()
+
+    # pylint: disable=no-self-use
+    def get(self):
+        """Function to search book by query"""
+        query = request.args.get("q")
+        page = request.args.get("page", 1, type=int)
+        if not query:
+            return '', 204
+        search_result = Book.search(query, page).all()
+        if not search_result:
+            return {"message": "Nothing to show"}, 404
+        return {"search_result": self.book_schema.dump(search_result,
+                                                       many=True)}
