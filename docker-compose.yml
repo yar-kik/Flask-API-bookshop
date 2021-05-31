@@ -12,11 +12,13 @@ services:
         environment:
             - CACHE_REDIS_URL=redis://redis:6379
             - PROD_DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+            - ELASTICSEARCH_URL=http://elasticsearch:9200
         volumes:
             - ./backend:/api
         depends_on:
             - db
             - redis
+            - elasticsearch
 
     db:
         image: postgres
@@ -33,6 +35,17 @@ services:
         image: redis
         ports:
             - "6379:6379"
+
+    elasticsearch:
+        image: elasticsearch:7.5.2
+        ports:
+            - "9200:9200"
+        environment:
+            - xpack.security.enabled=false
+            - discovery.type=single-node
+        volumes:
+            - ./backend/elasticsearch:/api/elasticsearch
+
 
     client:
         build:

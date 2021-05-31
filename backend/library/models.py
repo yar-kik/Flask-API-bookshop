@@ -1,10 +1,12 @@
 """Module for database entity"""
+from library.mixins import SearchableMixin
 from utils import db
 
 
-class Book(db.Model):
+class Book(db.Model, SearchableMixin):
     """Class for book entity in database"""
     __tablename__ = 'books'
+    __searchable__ = ["title", "author", "description"]
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), nullable=False, index=True)
