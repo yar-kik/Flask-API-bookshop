@@ -13,6 +13,8 @@ services:
             - CACHE_REDIS_URL=redis://redis:6379
             - PROD_DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
             - ELASTICSEARCH_URL=http://elasticsearch:9200
+            - CELERY_BROKER_URL=redis://redis:6379
+            - CELERY_RESULT_BACKEND=redis://redis:6379
         volumes:
             - ./backend:/api
         depends_on:
@@ -30,6 +32,33 @@ services:
             - "5432:5432"
         volumes:
             - ./backend/database:/api/database
+
+    worker:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        command: celery --app=celery_worker.celery worker --loglevel=info
+        volumes:
+            - ./backend:/api
+        environment:
+            - FLASK_DEBUG=1
+            - APP_SETTINGS=config.DevelopmentConfig
+            - CELERY_BROKER_URL=redis://redis:6379
+            - CELERY_RESULT_BACKEND=redis://redis:6379
+        depends_on:
+            - api
+            - redis
+
+    migration:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        command: python manage.py db upgrade
+        volumes:
+            - ./backend:/api
+        depends_on:
+            - api
+            - db
 
     redis:
         image: redis

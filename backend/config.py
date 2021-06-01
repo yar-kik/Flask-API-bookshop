@@ -10,15 +10,21 @@ class Config:
     """Base configurations"""
     SECRET_KEY = os.environ.get('SECRET_KEY', "hardtorememberstring")
 
-    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
-    MAIL_PORT = os.environ.get('MAIL_PORT', '587')
-    MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TL', '1'))
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'username')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'password')
+    MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.mailtrap.io')
+    MAIL_PORT = os.environ.get('MAIL_PORT', '2525')
+    MAIL_USE_TLS = bool(int(os.environ.get('MAIL_USE_TLS', '1')))
+    MAIL_USE_SSL = bool(int(os.environ.get('MAIL_USE_SSL', '0')))
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
     FLASK_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASK_MAIL_SENDER = 'Flasky Admin <flasky@example.com>'
-    FLASK_ADMIN = os.environ.get('FLASKY_ADMIN', 'flask_admin')
+    FLASK_MAIL_SENDER = "flask@mail.com"
+    ADMINS = ["admin@mail.com"]
+
+    CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL",
+                                       'redis://localhost:6379')
+    CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND",
+                                           'redis://localhost:6379')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
