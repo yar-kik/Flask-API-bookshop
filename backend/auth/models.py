@@ -10,13 +10,14 @@ class User(db.Model):
     """Class for user entity in database"""
     __tablename__ = "users"
 
-    # TODO: first/last name, date register, phone number?
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True, nullable=False)
-    username = db.Column(db.String(64), nullable=False, unique=True,
-                         index=True)  # TODO: change to length 32
+    username = db.Column(db.String(32), nullable=False, unique=True,
+                         index=True)
     password = db.Column(db.String(128), nullable=False)
-    uuid = db.Column(db.String(36))  # TODO: add index=True
+    first_name = db.Column(db.String(32))
+    last_name = db.Column(db.String(32))
+    uuid = db.Column(db.String(36))
     is_admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, *args, **kwargs):

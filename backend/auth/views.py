@@ -1,4 +1,6 @@
 """Module for auth controllers (views)"""
+from datetime import timedelta
+
 from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
@@ -8,9 +10,8 @@ from sqlalchemy.exc import IntegrityError
 from auth.models import User
 from auth.schemas import UserSchema
 from common import token_required, get_token, encode_auth_token, send_email
+from config import TOKEN_EXPIRATION
 from utils import db, cache
-
-expiration = {"minutes": 5}  # TODO: move to configs
 
 
 class RegisterApi(Resource):
@@ -26,7 +27,7 @@ class RegisterApi(Resource):
         try:
             db.session.add(user)
             db.session.commit()
-        except IntegrityError as e:
+        except IntegrityError:
             db.session.rollback()
             return {"message": "User with this username "
                                "or email already exists"}, 409
@@ -52,7 +53,7 @@ class LoginApi(Resource):
             or_(User.username == username, User.email == username)).first()
         if not user or not user.verify_password(auth.get("password", '')):
             return {"message": "User doesn't exist or wrong password"}, 404
-        token = encode_auth_token(user.uuid, expiration, user.is_admin)
+        token = encode_auth_token(user.uuid, TOKEN_EXPIRATION, user.is_admin)
         return {"message": "Successfully logged in",
                 "token": token}, 200
 
@@ -65,6 +66,6 @@ class LogoutApi(Resource):
     def get(self):
         """Function for user logout"""
         token = get_token()
-        # TODO: don't hardcode
-        cache.add(f"blacklisted_token:{token}", token, timeout=5 * 60)
+        cache.add(f"blacklisted_token:{token}", token,
+                  timeout=int(timedelta(**TOKEN_EXPIRATION).total_seconds()))
         return {"message": "Successfully logged out"}, 200

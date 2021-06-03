@@ -1,21 +1,20 @@
 """Module for deserialization and serialization auth models"""
 from marshmallow import fields, validate
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+from config import USERNAME_REGEX, PASSWORD_REGEX
 from .models import User
 
 
 class UserSchema(SQLAlchemyAutoSchema):
     """Class for user model serialization/deserialization"""
-    # TODO: Move regexp to configs
     username = fields.String(required=True,
                              validate=[validate.Length(4, 32),
-                                       validate.Regexp(
-                                           r"^[a-zA-Z0-9_-]{4,32}$")])
+                                       validate.Regexp(USERNAME_REGEX)])
     email = fields.Email(required=True, validate=validate.Length(max=64))
     password = fields.String(required=True,
                              validate=[validate.Length(4, 64),
-                                       validate.Regexp(
-                                           r"^[a-zA-Z0-9_!@#$%^&*-]{4,64}$")])
+                                       validate.Regexp(PASSWORD_REGEX)])
 
     # pylint: disable=missing-class-docstring
     class Meta:

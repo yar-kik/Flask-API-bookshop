@@ -10,9 +10,8 @@ from sqlalchemy.exc import IntegrityError
 
 from auth.models import User
 from utils import create_app, db
+from config import EMAIL_REGEX, USERNAME_REGEX
 
-email_regex = r'^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
-username_regex = r"^[a-zA-Z0-9_-]{4,32}$"
 app = create_app(os.getenv('FLASK_ENV') or 'default')
 manager = Manager(app)
 
@@ -21,11 +20,12 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def create_admin():
+    """Create user with admin rights"""
     username = input("Enter username: ")
-    if not re.search(username_regex, username):
+    if not re.search(USERNAME_REGEX, username):
         return "Invalid username!"
     email = input("Enter email: ")
-    if not re.search(email_regex, email):
+    if not re.search(EMAIL_REGEX, email):
         return "Invalid email!"
     for _ in range(3):
         password = getpass("Enter password: ")
@@ -43,7 +43,7 @@ def create_admin():
                      is_admin=True)
         db.session.add(admin)
         db.session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()
         return "User with this username or email already exists"
     return "Created successfully"
