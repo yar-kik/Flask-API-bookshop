@@ -34,7 +34,8 @@ class TestRegistrationView(BaseCase):
         db.session.commit()
         response = register_user(self, "user", "other@gmail.com", "pass321")
         self.assertEqual(response.status_code, 409)
-        self.assertEqual(response.json["message"], "Such user exists")
+        self.assertEqual(response.json["message"], "User with this username "
+                                                   "or email already exists")
 
 
 class TestLoginView(BaseCase):

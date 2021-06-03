@@ -6,6 +6,7 @@ from .models import User
 
 class UserSchema(SQLAlchemyAutoSchema):
     """Class for user model serialization/deserialization"""
+    # TODO: Move regexp to configs
     username = fields.String(required=True,
                              validate=[validate.Length(4, 32),
                                        validate.Regexp(

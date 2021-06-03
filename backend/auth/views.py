@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 
 from auth.models import User
 from auth.schemas import UserSchema
-from common import token_required, get_token, encode_auth_token
+from common import token_required, get_token, encode_auth_token, send_email
 from utils import db, cache
 
 expiration = {"minutes": 5}  # TODO: move to configs
@@ -28,7 +28,11 @@ class RegisterApi(Resource):
             db.session.commit()
         except IntegrityError as e:
             db.session.rollback()
-            return {"message": "Such user exists"}, 409
+            return {"message": "User with this username "
+                               "or email already exists"}, 409
+        send_email.apply_async(args=["Successful registration!",
+                                     [user.email],
+                                     "You have been successfully registered"])
         return {"user": self.user_schema.dump(user),
                 "message": "Successfully registered"}, 201
 

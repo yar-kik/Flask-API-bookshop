@@ -2,12 +2,13 @@
 
 import datetime
 from functools import wraps
-from typing import Callable, Optional, Dict
+from typing import Callable, Optional, Dict, List
 
 from flask import request, current_app
 import jwt
+from flask_mail import Message
 
-from utils import cache
+from utils import cache, mail, celery
 
 
 def encode_auth_token(user_id: str,
@@ -80,3 +81,16 @@ def admin_required(function: Callable):
         return function(*args, **kwargs)
 
     return wrapper
+
+
+@celery.task
+def send_email(subject: str, recipients: List[str],
+               text_body: str, sender: str = None,
+               html_body: str = None) -> None:
+    """Send email via SMTP server"""
+    if sender is None:
+        sender = current_app.config.get("FLASK_MAIL_SENDER")
+    message = Message(subject, sender=sender, recipients=recipients)
+    message.body = text_body
+    message.html = html_body or text_body
+    mail.send(message)
