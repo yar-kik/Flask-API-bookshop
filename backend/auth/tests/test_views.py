@@ -76,7 +76,7 @@ class TestLoginView(BaseCase):
         self.assertEqual(response.json['message'], 'Successfully registered')
         self.assertEqual(response.status_code, 201)
 
-        response = self.client.post(
+        response = self.client.get(
             "/auth/login",
             data=json.dumps({"username": 'user',
                              "password": 'pass123'}),

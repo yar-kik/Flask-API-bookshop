@@ -21,6 +21,7 @@ services:
             - db
             - redis
             - elasticsearch
+            - migration
 
     db:
         image: postgres
@@ -57,7 +58,6 @@ services:
         volumes:
             - ./backend:/api
         depends_on:
-            - api
             - db
 
     redis:
