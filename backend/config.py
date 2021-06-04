@@ -32,6 +32,7 @@ class Config:
                                        'redis://localhost:6379')
     CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND",
                                            'redis://localhost:6379')
+    CELERY_IGNORE_RESULT = True
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
