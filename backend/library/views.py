@@ -20,12 +20,13 @@ class BookListApi(Resource):
         """Get list of book objects"""
         page = request.args.get('page', 1, type=int)
         book_service = BookServices(db.session.query(Book), request.args)
-        all_books = book_service.filter_by_query() \
+        all_books = book_service.search_by_query().filter_by_query() \
             .sort_by_query().paginate_by_query()
-        data = {"books": self.book_schema.dump(all_books.items, many=True),
+        if not all_books.items:
+            return {"message": "Nothing to show"}, 404
+        return {"books": self.book_schema.dump(all_books.items, many=True),
                 "pages_amount": all_books.pages,
                 "current_page": page}
-        return data
 
     @token_required
     @admin_required
@@ -99,21 +100,3 @@ class BookApi(Resource):
         book.delete()
         cache.delete(f"book:{book_id}")
         return '', 204
-
-
-class SearchApi(Resource):
-    """Class for searching book by url-query"""
-    book_schema = BookSchema()
-
-    # pylint: disable=no-self-use
-    def get(self):
-        """Function to search book by query"""
-        query = request.args.get("q")
-        page = request.args.get("page", 1, type=int)
-        if not query:
-            return '', 204
-        search_result = Book.search(query, page).all()
-        if not search_result:
-            return {"message": "Nothing to show"}, 404
-        return {"search_result": self.book_schema.dump(search_result,
-                                                       many=True)}

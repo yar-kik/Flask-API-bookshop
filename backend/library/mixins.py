@@ -10,12 +10,11 @@ class SearchableMixin:
     """Mixin to implement search functions"""
 
     @classmethod
-    def search(cls, expression, page):
+    def search(cls, expression):
         """Search by query function"""
-        ids = query_index(cls.__tablename__, expression, page,
-                          current_app.config["SEARCH_RESULT_PER_PAGE"])
+        ids = query_index(cls.__tablename__, expression)
         if not ids:
-            return None
+            return cls.query.filter(cls.id.in_(ids))
         when = [(id_, i) for i, id_ in enumerate(ids)]
         return cls.query.filter(cls.id.in_(ids)).order_by(
             db.case(when, value=cls.id))

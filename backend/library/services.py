@@ -47,3 +47,10 @@ class BookServices:
         return self.db_query.paginate(page,
                                       current_app.config['BOOKS_PER_PAGE'],
                                       True)
+
+    def search_by_query(self):
+        """Function to search book by query"""
+        query = self.search_query.get("q")
+        if query:
+            self.db_query = Book.search(query)
+        return self
