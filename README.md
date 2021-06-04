@@ -30,7 +30,9 @@ Or you can build a production ready environment:
 ```
 docker-compose -f docker-compose.yml up -d
 ``` 
-This may take a few minutes. Finally, your api will work on `http://localhost:5000/`.
+This may take a few minutes. Finally, your api will work on `http://localhost:5000/` 
+if you start development configuration or on `http://localhost/` if you start production 
+configs.
 
 ## Functionality
 With command line you can create new admin user:

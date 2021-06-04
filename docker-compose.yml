@@ -78,3 +78,12 @@ services:
             - discovery.type=single-node
         volumes:
             - ./backend/elasticsearch:/api/elasticsearch
+
+    nginx:
+        build:
+            context: ./nginx
+            dockerfile: Dockerfile
+        ports:
+            - 80:80
+        depends_on:
+            - api
