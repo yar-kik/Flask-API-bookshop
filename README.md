@@ -1,28 +1,53 @@
-# Bookshop with Flask and React
+# Bookshop with Flask-RESTful API
 [![Coverage Status](https://coveralls.io/repos/github/yar-kik/botforqueue/badge.svg?branch=master)](https://coveralls.io/github/yar-kik/botforqueue?branch=master)
 [![Build Status](https://travis-ci.com/yar-kik/botforqueue.svg?branch=master)](https://travis-ci.com/yar-kik/botforqueue)
-
+![GitHub](https://img.shields.io/github/license/yar-kik/Flask-API-bookshop)
+[![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-3810/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yar-kik/Flask-API-bookshop/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yar-kik/Flask-API-bookshop/?branch=master)
 ## Technologies
-Project use such technologies:
-* Flask Rest-API as backend
-* React as frontend
-* PostgreSQL as database
+Project uses such technologies:
+* Flask Rest-API with JWT-token for auth
+* PostgreSQL
+* Celery for asynchronous tasks
+* Redis for caching
 * Docker for containerizing
+* Elasticsearch
 
 ## Requirements
-You should have already installed Docker. 
+You should have already installed Docker and Git. 
 
 ## Usage
-With `git clone https://github.com/yar-kik/botforqueue.git` get local copy of project.
+Get local copy of project with: 
+```
+git clone https://github.com/yar-kik/Flask-API-bookshop.git
+``` 
 
-Run `docker-compose build` to build a local development environment according to our specifications in docker-compose.yml. 
+To build a local development environment and start API server run:  
+```
+docker-compose -f docker-compose-dev.yml up -d 
+``` 
+Or you can build a production ready environment: 
+```
+docker-compose -f docker-compose.yml up -d
+``` 
+This may take a few minutes. Finally, your api will work on `http://localhost:5000/`.
 
-After the containers have been built (this may take a few minutes), run 
+## Functionality
+With command line you can create new admin user:
+```
+docker-compose exec api python3 manage.py create_admin
+```
+Only admin can create, update and delete book items. 
 
-`docker-compose up` 
+Application support registration, login and logout. Users can also change password via email.
+To make CRUD operation with books, admin should be logged-in and send request 
+with headers `{"Content-Type": "application/json", "Authorization": "Bearer <Token>"}` 
 
-This one command boots up a local server for Flask (on port 5000) and React (on port 3000). Head over to
+To make operation of filtering, sorting, pagination and searching user should use 
+query params, for example: 
+* For sorting - `GET http://localhost:5000/books?order=desc&sort=price`
+* For filtering - `GET http://localhost:5000/books?category=fantasy&language=english`
+* For pagination - `GET http://localhost:5000/books?page=2`
+* For searching - `GET http://localhost:5000/books?q=harry+potter`
 
-`http://localhost:3000/` 
-
-to view an React webpage with ... empty main page. 
+It's possible to combine different query params in one request. 
