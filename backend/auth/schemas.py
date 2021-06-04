@@ -19,6 +19,6 @@ class UserSchema(SQLAlchemyAutoSchema):
     # pylint: disable=missing-class-docstring
     class Meta:
         model = User
-        exclude = ('id', 'uuid', 'is_admin')
+        exclude = ('id', 'uuid', 'is_admin', "_password")
         load_only = ('password',)
         load_instance = True

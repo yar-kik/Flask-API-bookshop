@@ -8,6 +8,7 @@ load_dotenv(".env.local")
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 TOKEN_EXPIRATION = {"minutes": 5}
+LINK_EXPIRATION = {"minutes": 10}
 EMAIL_REGEX = r'^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
 USERNAME_REGEX = r"^[a-zA-Z0-9_-]{4,32}$"
 PASSWORD_REGEX = r"^[a-zA-Z0-9_!@#$%^&*-]{4,64}$"

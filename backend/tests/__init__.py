@@ -25,10 +25,8 @@ def login_user(self, username: str, password: str) -> Response:
     """Function to login user"""
     user_data = f"{username}:{password}".encode("utf-8")
     credentials = b64encode(user_data).decode('utf-8')
-    return self.client.post(
+    return self.client.get(
         "/auth/login",
-        data=json.dumps({"username": username,
-                         "password": password}),
         headers={"Content-Type": "application/json",
                  "Authorization": f"Basic {credentials}"}
     )

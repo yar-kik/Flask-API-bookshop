@@ -2,7 +2,7 @@
 
 from uuid import uuid4
 from utils import db
-from sqlalchemy.ext.hybrid import hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -14,7 +14,7 @@ class User(db.Model):
     email = db.Column(db.String(64), unique=True, index=True, nullable=False)
     username = db.Column(db.String(32), nullable=False, unique=True,
                          index=True)
-    password = db.Column(db.String(128), nullable=False)
+    _password = db.Column(db.String(128), nullable=False)
     first_name = db.Column(db.String(32))
     last_name = db.Column(db.String(32))
     uuid = db.Column(db.String(36))
@@ -23,7 +23,7 @@ class User(db.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.uuid = str(uuid4())
-        self.password = generate_password_hash(kwargs['password'])
+        self.password = kwargs['password']
 
     def __str__(self):
         return f"User {self.username}"
@@ -33,4 +33,19 @@ class User(db.Model):
         """
         Return true if password_hash and password are equals
         """
-        return check_password_hash(self.password, password)
+        return check_password_hash(self._password, password)
+
+    @hybrid_property
+    def password(self) -> str:
+        """Password getter"""
+        return self._password
+
+    @password.setter
+    def password(self, new_password: str):
+        """Password setter that automatically generate hash"""
+        self._password = generate_password_hash(new_password)
+
+    def save(self):
+        """Save entity to database"""
+        db.session.add(self)
+        db.session.commit()
