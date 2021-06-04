@@ -7,33 +7,19 @@ services:
             dockerfile: Dockerfile
         ports:
             - "5000:5000"
-        command: python -m gunicorn --workers 3 --bind 0.0.0.0:5000 manage:app
+        command: python manage.py runserver -h 0.0.0.0 -p 5000
         environment:
             - FlASK_APP=manage.py
-            - FLASK_ENV=production
-            - CACHE_REDIS_URL=redis://redis:6379
-            - PROD_DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+            - FLASK_ENV=development
             - ELASTICSEARCH_URL=http://elasticsearch:9200
             - CELERY_BROKER_URL=redis://redis:6379
             - CELERY_RESULT_BACKEND=redis://redis:6379
         volumes:
             - ./backend:/api
         depends_on:
-            - db
             - redis
             - elasticsearch
             - migration
-
-    db:
-        image: postgres
-        environment:
-            - POSTGRES_DB=postgres
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=postgres
-        ports:
-            - "5432:5432"
-        volumes:
-            - ./backend/database:/api/database
 
     worker:
         build:
@@ -43,8 +29,6 @@ services:
         volumes:
             - ./backend:/api
         environment:
-            - FLASK_DEBUG=1
-            - APP_SETTINGS=config.ProductionConfig
             - CELERY_BROKER_URL=redis://redis:6379
             - CELERY_RESULT_BACKEND=redis://redis:6379
         depends_on:
@@ -57,12 +41,9 @@ services:
             dockerfile: Dockerfile
         command: python manage.py db upgrade
         environment:
-            - FLASK_ENV=production
-            - PROD_DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+            - FLASK_ENV=development
         volumes:
             - ./backend:/api
-        depends_on:
-            - db
 
     redis:
         image: redis
