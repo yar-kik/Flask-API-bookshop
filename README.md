@@ -1,6 +1,6 @@
 # Bookshop with Flask-RESTful API
-[![Coverage Status](https://coveralls.io/repos/github/yar-kik/botforqueue/badge.svg?branch=master)](https://coveralls.io/github/yar-kik/botforqueue?branch=master)
-[![Build Status](https://travis-ci.com/yar-kik/botforqueue.svg?branch=master)](https://travis-ci.com/yar-kik/botforqueue)
+[![Coverage Status](https://coveralls.io/repos/github/yar-kik/Flask-API-bookshop/badge.svg?branch=master)](https://coveralls.io/github/yar-kik/Flask-API-bookshop?branch=master)
+[![Build Status](https://travis-ci.com/yar-kik/Flask-API-bookshop.svg?branch=master)](https://travis-ci.com/yar-kik/Flask-API-bookshop)
 ![GitHub](https://img.shields.io/github/license/yar-kik/Flask-API-bookshop)
 [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-3810/)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yar-kik/Flask-API-bookshop/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yar-kik/Flask-API-bookshop/?branch=master)
@@ -30,7 +30,9 @@ Or you can build a production ready environment:
 ```
 docker-compose -f docker-compose.yml up -d
 ``` 
-This may take a few minutes. Finally, your api will work on `http://localhost:5000/`.
+This may take a few minutes. Finally, your api will work on `http://localhost:5000/` 
+if you start development configuration or on `http://localhost/` if you start production 
+configs.
 
 ## Functionality
 With command line you can create new admin user:
