@@ -17,7 +17,7 @@ class SearchableMixin:
             return cls.query.filter(cls.id.in_(ids))
         when = [(id_, i) for i, id_ in enumerate(ids)]
         return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id))
+            db.case(when, value=cls.id))  # TODO: delete in future?
 
     @classmethod
     def before_commit(cls, session):
